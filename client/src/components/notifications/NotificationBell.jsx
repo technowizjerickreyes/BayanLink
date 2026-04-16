@@ -1,14 +1,16 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext.jsx";
 import useNotifications from "../../hooks/useNotifications.js";
-import { formatDateTime } from "../../utils/formatters.js";
+import { getNotificationPath } from "../../utils/rolePaths.js";
 import Icon from "../common/Icon.jsx";
 import LoadingState from "../common/LoadingState.jsx";
 import ErrorState from "../common/ErrorState.jsx";
+import NotificationListPanel from "./NotificationListPanel.jsx";
 
 export default function NotificationBell() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { items, meta, loading, error, readAll, readOne } = useNotifications(user?.role, Boolean(user?.role));
   const [open, setOpen] = useState(false);
 
@@ -30,9 +32,9 @@ export default function NotificationBell() {
           <div className="notification-header">
             <div>
               <strong>Notifications</strong>
-              <small>{meta.unreadCount || 0} unread</small>
+              <small>{meta.unreadCount || 0} unread of {meta.total || 0}</small>
             </div>
-            <button className="button ghost btn btn-light" onClick={readAll} type="button">
+            <button className="button ghost btn btn-light" disabled={!meta.unreadCount} onClick={readAll} type="button">
               Mark all read
             </button>
           </div>
@@ -41,27 +43,33 @@ export default function NotificationBell() {
           {error && <ErrorState message={error} />}
 
           {!loading && !error && (
-            <div className="notification-list">
-              {items.length === 0 ? (
-                <p className="notification-empty">No notifications yet.</p>
-              ) : (
-                items.map((item) => (
-                  <Link
-                    className={`notification-item ${item.readAt ? "read" : ""}`}
-                    key={item._id}
-                    onClick={() => {
-                      readOne(item._id);
-                      setOpen(false);
-                    }}
-                    to={item.link || "/dashboard"}
-                  >
-                    <strong>{item.title}</strong>
-                    <p>{item.message}</p>
-                    <small>{formatDateTime(item.createdAt)}</small>
-                  </Link>
-                ))
-              )}
-            </div>
+            <>
+              <div className="notification-list">
+                <NotificationListPanel
+                  compact
+                  emptyMessage="Service updates will appear here as new requests, appointments, and reports move forward."
+                  items={items}
+                  onOpen={async (item) => {
+                    await readOne(item._id);
+                    setOpen(false);
+                    navigate(item.link || "/dashboard");
+                  }}
+                />
+              </div>
+
+              <div className="notification-footer">
+                <button
+                  className="button ghost btn btn-light"
+                  onClick={() => {
+                    setOpen(false);
+                    navigate(getNotificationPath(user?.role));
+                  }}
+                  type="button"
+                >
+                  View all notifications
+                </button>
+              </div>
+            </>
           )}
         </section>
       )}

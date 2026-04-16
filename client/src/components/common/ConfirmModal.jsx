@@ -9,12 +9,13 @@ export default function ConfirmModal({
   onConfirm,
   onCancel,
   children,
+  wide = false,
 }) {
   if (!open) return null;
 
   return (
     <div className="modal-backdrop" role="presentation">
-      <section aria-modal="true" className="modal" role="dialog">
+      <section aria-modal="true" className={`modal ${wide ? "wide" : ""}`} role="dialog">
         <button aria-label="Close" className="icon-button modal-close" onClick={onCancel} title="Close" type="button">
           <Icon name="close" />
         </button>

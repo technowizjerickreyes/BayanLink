@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ConfirmModal from "../common/ConfirmModal.jsx";
 import DataTable from "../common/DataTable.jsx";
 import ErrorState from "../common/ErrorState.jsx";
@@ -6,6 +6,7 @@ import FormField from "../common/FormField.jsx";
 import LoadingState from "../common/LoadingState.jsx";
 import PageHeader from "../common/PageHeader.jsx";
 import SearchFilterBar from "../common/SearchFilterBar.jsx";
+import StatCard from "../common/StatCard.jsx";
 import StatusBadge from "../common/StatusBadge.jsx";
 import { getComplaints, updateComplaint } from "../../services/complaintReportService.js";
 import { complaintCategories } from "../../utils/serviceCatalog.js";
@@ -53,6 +54,10 @@ export default function ComplaintManagementScreen({ role, title, eyebrow, descri
         });
         setItems(Array.isArray(response.data) ? response.data : []);
         setMeta(response.meta || { page: 1, pages: 1, total: 0, limit: 10 });
+        setSelected((current) => {
+          const nextSelected = (response.data || []).find((item) => item._id === current?._id);
+          return nextSelected || current || (response.data || [])[0] || null;
+        });
       } catch (requestError) {
         setError(requestError.response?.data?.message || "Failed to load complaints.");
       } finally {
@@ -62,6 +67,15 @@ export default function ComplaintManagementScreen({ role, title, eyebrow, descri
 
     load();
   }, [filters, refreshKey, role]);
+
+  const summary = useMemo(
+    () => ({
+      incoming: items.filter((item) => ["submitted", "under_review"].includes(item.status)).length,
+      fieldwork: items.filter((item) => item.status === "in_progress").length,
+      resolved: items.filter((item) => ["resolved", "closed"].includes(item.status)).length,
+    }),
+    [items]
+  );
 
   const handleSubmit = async () => {
     if (!editing) return;
@@ -82,6 +96,12 @@ export default function ComplaintManagementScreen({ role, title, eyebrow, descri
   return (
     <div className="page-stack">
       <PageHeader description={description} eyebrow={eyebrow} title={title} />
+
+      <div className="dashboard-mini-stat-grid appointment-stat-grid">
+        <StatCard caption="New or under-review cases" icon="alert" label="Incoming" tone="coral" value={summary.incoming} />
+        <StatCard caption="Cases currently being handled" icon="tracking" label="In progress" tone="blue" value={summary.fieldwork} />
+        <StatCard caption="Resolved or closed cases in view" icon="check" label="Resolved" tone="default" value={summary.resolved} />
+      </div>
 
       <SearchFilterBar>
         <FormField label="Search" onChange={(event) => setFilters((current) => ({ ...current, search: event.target.value, page: 1 }))} placeholder="Tracking, title, office" value={filters.search} />
@@ -111,8 +131,15 @@ export default function ComplaintManagementScreen({ role, title, eyebrow, descri
       )}
 
       {selected && (
-        <section className="detail-panel">
-          <h2>{selected.title}</h2>
+        <section className="detail-panel complaint-admin-panel">
+          <div className="appointment-section-head">
+            <div>
+              <p className="eyebrow">Complaint detail panel</p>
+              <h2>{selected.title}</h2>
+              <p>{selected.trackingNumber}</p>
+            </div>
+            <StatusBadge value={selected.status} />
+          </div>
           <div className="detail-grid">
             <div>
               <dt>Citizen</dt>

@@ -11,7 +11,8 @@ import { notifyScopedAdmins, notifyUser } from "./notificationService.js";
 
 const APPOINTMENT_CREATE_FIELDS = ["serviceId", "date", "timeSlot", "endTimeSlot", "purpose", "notes", "linkedRequestId"];
 const APPOINTMENT_CITIZEN_UPDATE_FIELDS = ["date", "timeSlot", "endTimeSlot", "purpose", "notes", "status"];
-const APPOINTMENT_MANAGER_UPDATE_FIELDS = ["status", "notes"];
+const APPOINTMENT_MANAGER_UPDATE_FIELDS = ["status", "notes", "date", "timeSlot", "endTimeSlot"];
+const ACTIVE_APPOINTMENT_STATUSES = ["pending", "confirmed"];
 
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -64,6 +65,10 @@ function appointmentFilters(query = {}) {
     filters.status = query.status;
   }
 
+  if (query.serviceId) {
+    filters.serviceId = query.serviceId;
+  }
+
   if (query.dateFrom || query.dateTo) {
     filters.date = {};
     if (query.dateFrom) filters.date.$gte = normalizeDateOnly(query.dateFrom);
@@ -88,6 +93,26 @@ function managedAppointmentScope(user) {
   return scope;
 }
 
+function resolveBarangayScope({ user, scope, barangayId = "" }) {
+  if (scope !== "barangay") {
+    return "";
+  }
+
+  if (user.role === "citizen" || user.role === "barangay_admin") {
+    return user.barangayId;
+  }
+
+  if (user.role === "municipal_admin") {
+    if (!barangayId) {
+      throw new ApiError(400, "Select a barangay appointment first to review service-desk availability");
+    }
+
+    return barangayId;
+  }
+
+  throw new ApiError(403, "You do not have permission to review appointment availability");
+}
+
 async function ensureOpenSlot({ municipalityId, barangayId, scope, date, timeSlot, excludeId = null }) {
   const filters = {
     municipalityId,
@@ -95,7 +120,7 @@ async function ensureOpenSlot({ municipalityId, barangayId, scope, date, timeSlo
     scope,
     date,
     timeSlot,
-    status: { $in: ["pending", "confirmed"] },
+    status: { $in: ACTIVE_APPOINTMENT_STATUSES },
   };
 
   if (excludeId) {
@@ -137,6 +162,17 @@ async function validateLinkedRequest({ linkedRequestId, user, municipalityId }) 
   return request;
 }
 
+async function findCitizenAppointment(filters) {
+  return Appointment.findOne(filters).populate("linkedRequestId", "trackingNumber serviceName status").lean();
+}
+
+async function findManagedAppointment(filters) {
+  return Appointment.findOne(filters)
+    .populate("citizenId", "firstName lastName email barangayId")
+    .populate("linkedRequestId", "trackingNumber serviceName status")
+    .lean();
+}
+
 export async function listCitizenAppointments({ user, query, pagination }) {
   const filters = {
     citizenId: user._id,
@@ -152,6 +188,20 @@ export async function listCitizenAppointments({ user, query, pagination }) {
     items,
     meta: getPaginationMeta({ ...pagination, total }),
   };
+}
+
+export async function getCitizenAppointment({ user, id }) {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ApiError(400, "Invalid appointment id");
+  }
+
+  const item = await findCitizenAppointment({ _id: id, citizenId: user._id });
+
+  if (!item) {
+    throw new ApiError(404, "Appointment not found");
+  }
+
+  return item;
 }
 
 export async function listManagedAppointments({ user, query, pagination }) {
@@ -174,6 +224,65 @@ export async function listManagedAppointments({ user, query, pagination }) {
   return {
     items,
     meta: getPaginationMeta({ ...pagination, total }),
+  };
+}
+
+export async function getManagedAppointment({ user, id }) {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ApiError(400, "Invalid appointment id");
+  }
+
+  const item = await findManagedAppointment({ _id: id, ...managedAppointmentScope(user) });
+
+  if (!item) {
+    throw new ApiError(404, "Appointment not found");
+  }
+
+  return item;
+}
+
+export async function getAppointmentAvailability({ user, query }) {
+  const definition = appointmentDefinition(query.serviceId);
+
+  if (!definition) {
+    throw new ApiError(400, "Service is invalid");
+  }
+
+  const date = normalizeDateOnly(query.date);
+  const barangayId = resolveBarangayScope({ user, scope: definition.scope, barangayId: query.barangayId });
+  const filters = {
+    municipalityId: user.municipalityId,
+    barangayId: definition.scope === "barangay" ? barangayId : "",
+    scope: definition.scope,
+    date,
+    status: { $in: ACTIVE_APPOINTMENT_STATUSES },
+  };
+
+  if (query.excludeId) {
+    filters._id = { $ne: query.excludeId };
+  }
+
+  let finder = Appointment.find(filters)
+    .select("timeSlot endTimeSlot serviceId serviceName status citizenId purpose linkedRequestId barangayId")
+    .sort({ timeSlot: 1, createdAt: 1 });
+
+  if (user.role !== "citizen") {
+    finder = finder.populate("citizenId", "firstName lastName email barangayId");
+  }
+
+  const bookedItems = await finder.lean();
+
+  return {
+    service: {
+      value: definition.value,
+      label: definition.label,
+      scope: definition.scope,
+    },
+    date,
+    barangayId,
+    bookedCount: bookedItems.length,
+    bookedItems,
+    bookedTimeSlots: bookedItems.map((item) => item.timeSlot),
   };
 }
 
@@ -292,7 +401,7 @@ export async function updateCitizenAppointment({ user, id, payload }) {
   ensureFutureBooking(nextDate, nextTimeSlot);
   await ensureOpenSlot({
     municipalityId: item.municipalityId,
-    barangayId: user.barangayId,
+    barangayId: item.barangayId,
     scope: item.scope,
     date: nextDate,
     timeSlot: nextTimeSlot,
@@ -345,14 +454,50 @@ export async function updateManagedAppointment({ req, user, id, payload }) {
   }
 
   const oldValues = safeAuditSubset(item.toJSON(), APPOINTMENT_MANAGER_UPDATE_FIELDS);
+  const hasScheduleChange = Boolean(updates.date || updates.timeSlot || typeof updates.endTimeSlot === "string");
 
   if (typeof updates.notes === "string") {
     item.notes = updates.notes.trim();
   }
 
+  if (hasScheduleChange) {
+    const nextDate = updates.date ? normalizeDateOnly(updates.date) : item.date;
+    const nextTimeSlot = updates.timeSlot || item.timeSlot;
+
+    ensureFutureBooking(nextDate, nextTimeSlot);
+    await ensureOpenSlot({
+      municipalityId: item.municipalityId,
+      barangayId: item.barangayId,
+      scope: item.scope,
+      date: nextDate,
+      timeSlot: nextTimeSlot,
+      excludeId: item._id,
+    });
+
+    item.date = nextDate;
+    item.timeSlot = nextTimeSlot;
+    item.endTimeSlot = typeof updates.endTimeSlot === "string" ? updates.endTimeSlot : item.endTimeSlot;
+  }
+
   if (updates.status) {
     item.status = updates.status;
-    item.history.push(buildHistoryEntry({ status: updates.status, remarks: updates.notes || `Status changed to ${updates.status}.`, actor: user }));
+  }
+
+  if (updates.status || hasScheduleChange) {
+    const historyStatus = updates.status || item.status;
+    const defaultRemarks = hasScheduleChange
+      ? updates.status
+        ? `Schedule updated and status changed to ${historyStatus}.`
+        : "Schedule updated by the service desk."
+      : `Status changed to ${historyStatus}.`;
+
+    item.history.push(
+      buildHistoryEntry({
+        status: historyStatus,
+        remarks: updates.notes || defaultRemarks,
+        actor: user,
+      })
+    );
   }
 
   await item.save();
@@ -374,7 +519,7 @@ export async function updateManagedAppointment({ req, user, id, payload }) {
     barangayId: item.barangayId,
     type: "appointment",
     title: "Appointment updated",
-    message: `${item.serviceName} is now ${item.status}.`,
+    message: hasScheduleChange ? `${item.serviceName} was rescheduled. Current status: ${item.status}.` : `${item.serviceName} is now ${item.status}.`,
     entityType: "appointment",
     entityId: item._id,
   });

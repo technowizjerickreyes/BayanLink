@@ -33,47 +33,81 @@ export default function ComplaintViewPage() {
 
   return (
     <div className="page-stack">
-      <PageHeader eyebrow="Complaint Details" title={item?.trackingNumber || "Complaint"} />
+      <PageHeader
+        action="Back to Reports"
+        description="Review the latest office action, location details, and report timeline for this community issue."
+        eyebrow="Complaint Details"
+        onAction={() => navigate("/citizen/complaints")}
+        title={item?.trackingNumber || "Complaint"}
+      />
       {loading && <LoadingState message="Loading complaint details..." />}
       {error && <ErrorState message={error} />}
 
       {!loading && item && (
         <>
-          <section className="detail-panel">
-            <div className="detail-grid">
-              <div>
-                <dt>Issue</dt>
-                <dd>{item.title}</dd>
-              </div>
-              <div>
-                <dt>Status</dt>
-                <dd><StatusBadge value={item.status} /></dd>
-              </div>
-              <div>
-                <dt>Category</dt>
-                <dd><StatusBadge tone="info" value={item.category} /></dd>
-              </div>
-              <div>
-                <dt>Location</dt>
-                <dd>{item.location?.address || "-"}</dd>
-              </div>
+          <section className="document-module-hero detail">
+            <div className="document-module-hero-copy">
+              <p className="eyebrow">Reported issue</p>
+              <h2>{item.title}</h2>
+              <p>{item.description}</p>
             </div>
-            <p className="article-content">{item.description}</p>
-            <div className="timeline-list">
-              {(item.timeline || []).map((entry) => (
-                <article className="timeline-item" key={`${entry.createdAt}-${entry.status}`}>
-                  <strong>{entry.status.replaceAll("_", " ")}</strong>
-                  <p>{entry.remarks || "Status updated."}</p>
-                  <small>{formatDateTime(entry.createdAt)}</small>
-                </article>
-              ))}
+            <div className="document-module-hero-pills detail">
+              <span>
+                <StatusBadge value={item.status} />
+              </span>
+              <span>{item.trackingNumber}</span>
+              <span>{item.location?.address || "No location recorded"}</span>
             </div>
           </section>
 
-          <div className="form-actions">
-            <button className="button ghost btn btn-light" onClick={() => navigate("/citizen/complaints")} type="button">
-              Back
-            </button>
+          <div className="document-detail-grid">
+            <section className="detail-panel document-detail-card">
+              <div className="document-section-heading">
+                <h2>Report summary</h2>
+                <p>Key issue information and location details for your complaint.</p>
+              </div>
+              <div className="document-history-meta">
+                <div>
+                  <small>Status</small>
+                  <strong>{item.status.replaceAll("_", " ")}</strong>
+                </div>
+                <div>
+                  <small>Category</small>
+                  <strong>{item.category.replaceAll("_", " ")}</strong>
+                </div>
+                <div>
+                  <small>Address</small>
+                  <strong>{item.location?.address || "-"}</strong>
+                </div>
+                <div>
+                  <small>Submitted</small>
+                  <strong>{formatDateTime(item.createdAt)}</strong>
+                </div>
+              </div>
+
+              {item.location?.landmark && (
+                <div className="detail-copy">
+                  <h2>Landmark</h2>
+                  <p>{item.location.landmark}</p>
+                </div>
+              )}
+            </section>
+
+            <section className="detail-panel document-detail-card">
+              <div className="document-section-heading">
+                <h2>Timeline</h2>
+                <p>Review the latest office responses and workflow progress for this issue.</p>
+              </div>
+              <div className="timeline-list">
+                {(item.timeline || []).map((entry) => (
+                  <article className="timeline-item" key={`${entry.createdAt}-${entry.status}`}>
+                    <strong>{entry.status.replaceAll("_", " ")}</strong>
+                    <p>{entry.remarks || "Status updated."}</p>
+                    <small>{formatDateTime(entry.createdAt)}</small>
+                  </article>
+                ))}
+              </div>
+            </section>
           </div>
         </>
       )}

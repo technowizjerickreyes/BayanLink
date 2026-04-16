@@ -2121,6 +2121,537 @@
     @apply border-b border-bayan-soft-border pb-4;
   }
 
+  .appointment-booking-shell,
+  .appointment-booking-main,
+  .appointment-detail-main,
+  .appointment-detail-aside,
+  .appointment-admin-main,
+  .appointment-admin-aside,
+  .appointment-summary-card,
+  .appointment-summary-stack,
+  .appointment-section,
+  .appointment-timeline,
+  .appointment-modal-form {
+    @apply grid gap-4;
+  }
+
+  .appointment-booking-grid,
+  .appointment-detail-layout,
+  .appointment-admin-layout {
+    @apply grid gap-5 lg:grid-cols-[minmax(0,1.45fr)_minmax(300px,0.9fr)];
+  }
+
+  .appointment-panel,
+  .appointment-summary-card,
+  .appointment-history-card,
+  .appointment-calendar-column {
+    @apply rounded-[22px] border border-bayan-border bg-white shadow-card;
+  }
+
+  .appointment-panel,
+  .appointment-summary-card,
+  .appointment-history-card,
+  .appointment-calendar-column {
+    @apply p-5;
+  }
+
+  .appointment-panel {
+    @apply grid gap-4;
+  }
+
+  .appointment-summary-card {
+    @apply content-start;
+  }
+
+  .appointment-summary-card.admin-detail {
+    @apply sticky top-24;
+  }
+
+  .appointment-panel-head,
+  .appointment-section-head,
+  .appointment-summary-head,
+  .appointment-slot-head {
+    @apply grid gap-2;
+  }
+
+  .appointment-panel-head.compact {
+    @apply gap-1;
+  }
+
+  .appointment-panel-head h2,
+  .appointment-section-head h2,
+  .appointment-summary-head h2,
+  .appointment-slot-head h3,
+  .appointment-history-card h2 {
+    @apply m-0 text-[1.2rem] font-black text-bayan-ink;
+  }
+
+  .appointment-panel-head p:not(.eyebrow),
+  .appointment-section-head p:not(.eyebrow),
+  .appointment-summary-head p:not(.eyebrow),
+  .appointment-slot-head p,
+  .appointment-history-card p:not(.eyebrow) {
+    @apply m-0 text-sm leading-7 text-bayan-muted;
+  }
+
+  .appointment-service-grid,
+  .appointment-history-grid {
+    @apply grid gap-4;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  }
+
+  .appointment-service-card {
+    @apply grid gap-4 rounded-[24px] border border-bayan-border bg-white p-5 text-left shadow-card transition duration-150;
+  }
+
+  .appointment-service-card:hover,
+  .appointment-service-card.active {
+    @apply -translate-y-1 border-bayan-teal;
+  }
+
+  .appointment-service-card.active {
+    background:
+      radial-gradient(circle at top right, rgba(15, 118, 110, 0.12), transparent 35%),
+      #ffffff;
+  }
+
+  .appointment-service-top,
+  .appointment-history-top,
+  .appointment-calendar-card-top,
+  .appointment-timeline-top {
+    @apply flex items-start justify-between gap-3;
+  }
+
+  .appointment-service-icon {
+    @apply grid h-12 w-12 place-items-center rounded-2xl bg-bayan-teal-soft text-bayan-teal shadow-soft;
+  }
+
+  .appointment-service-copy {
+    @apply grid gap-2;
+  }
+
+  .appointment-service-copy h3 {
+    @apply m-0 text-lg font-black text-bayan-ink;
+  }
+
+  .appointment-service-copy p {
+    @apply m-0 text-sm leading-7 text-bayan-muted;
+  }
+
+  .appointment-service-meta,
+  .appointment-history-meta,
+  .appointment-success-meta {
+    @apply grid gap-3 md:grid-cols-2;
+  }
+
+  .appointment-service-meta div,
+  .appointment-history-meta div,
+  .appointment-summary-stack div,
+  .appointment-success-meta div {
+    @apply rounded-2xl border border-bayan-soft-border bg-slate-50/80 px-4 py-3;
+  }
+
+  .appointment-service-meta small,
+  .appointment-history-meta small,
+  .appointment-summary-stack small,
+  .appointment-success-meta small,
+  .appointment-review-card small {
+    @apply block text-[0.72rem] font-extrabold uppercase tracking-[0.12em] text-bayan-muted;
+  }
+
+  .appointment-service-meta strong,
+  .appointment-history-meta strong,
+  .appointment-summary-stack strong,
+  .appointment-success-meta strong,
+  .appointment-review-card strong {
+    @apply block text-sm font-black text-bayan-ink;
+  }
+
+  .appointment-linked-request {
+    @apply grid gap-3 rounded-[20px] border border-bayan-soft-border bg-slate-50/80 p-4;
+  }
+
+  .appointment-inline-note,
+  .appointment-confirm-note,
+  .appointment-empty-inline {
+    @apply flex items-start gap-3 rounded-2xl border border-bayan-soft-border bg-slate-50/80 px-4 py-3 text-sm leading-6 text-bayan-muted;
+  }
+
+  .appointment-inline-note .icon,
+  .appointment-confirm-note .icon {
+    @apply mt-1 text-bayan-teal;
+  }
+
+  .appointment-inline-note p,
+  .appointment-confirm-note p {
+    @apply m-0;
+  }
+
+  .appointment-inline-note strong {
+    @apply text-sm font-black text-bayan-ink;
+  }
+
+  .appointment-empty-inline.error {
+    @apply border-bayan-danger-border bg-bayan-danger-soft text-bayan-danger;
+  }
+
+  .appointment-date-shortcuts {
+    @apply grid gap-3;
+    grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  }
+
+  .appointment-date-chip {
+    @apply grid gap-1 rounded-2xl border border-bayan-soft-border bg-slate-50/85 px-3 py-3 text-left transition duration-150;
+  }
+
+  .appointment-date-chip strong {
+    @apply text-sm font-black text-bayan-ink;
+  }
+
+  .appointment-date-chip span {
+    @apply text-sm text-bayan-muted;
+  }
+
+  .appointment-date-chip:hover,
+  .appointment-date-chip.active {
+    @apply border-bayan-teal bg-bayan-teal-soft/20;
+  }
+
+  .appointment-availability-strip {
+    @apply grid gap-3 rounded-[20px] border border-bayan-soft-border bg-slate-50/85 p-4 md:grid-cols-3;
+  }
+
+  .appointment-availability-strip small {
+    @apply block text-[0.72rem] font-extrabold uppercase tracking-[0.12em] text-bayan-muted;
+  }
+
+  .appointment-availability-strip strong {
+    @apply block text-lg font-black text-bayan-ink;
+  }
+
+  .appointment-slot-section {
+    @apply grid gap-3;
+  }
+
+  .appointment-slot-grid {
+    @apply grid gap-3;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  }
+
+  .appointment-slot-grid.compact {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+
+  .appointment-slot {
+    @apply grid min-h-[84px] gap-1 rounded-2xl border border-bayan-soft-border bg-white px-3 py-3 text-left transition duration-150;
+  }
+
+  .appointment-slot strong {
+    @apply text-sm font-black text-bayan-ink;
+  }
+
+  .appointment-slot span {
+    @apply text-xs font-bold uppercase tracking-wide text-bayan-muted;
+  }
+
+  .appointment-slot small {
+    @apply text-xs text-bayan-muted;
+  }
+
+  .appointment-slot.available:hover {
+    @apply border-bayan-teal bg-bayan-teal-soft/15;
+  }
+
+  .appointment-slot.selected {
+    @apply border-bayan-teal bg-bayan-teal text-white;
+  }
+
+  .appointment-slot.selected strong,
+  .appointment-slot.selected span,
+  .appointment-slot.selected small {
+    @apply text-white;
+  }
+
+  .appointment-slot.booked {
+    @apply border-bayan-soft-border bg-slate-100/85 opacity-75;
+  }
+
+  .appointment-review-grid {
+    @apply grid gap-4 md:grid-cols-2;
+  }
+
+  .appointment-review-card {
+    @apply grid gap-2 rounded-[20px] border border-bayan-soft-border bg-slate-50/80 px-4 py-4;
+  }
+
+  .appointment-review-card p {
+    @apply m-0 text-sm leading-6 text-bayan-muted;
+  }
+
+  .appointment-confirm-note {
+    @apply border-bayan-yellow/40 bg-amber-50/80 text-bayan-ink;
+  }
+
+  .appointment-history-purpose {
+    @apply m-0 text-sm leading-7 text-bayan-ink;
+  }
+
+  .appointment-history-actions,
+  .appointment-admin-actions,
+  .appointment-view-toggle {
+    @apply flex flex-wrap gap-2;
+  }
+
+  .appointment-history-actions.column {
+    @apply grid;
+  }
+
+  .appointment-calendar-board {
+    @apply grid gap-4 xl:grid-cols-7;
+  }
+
+  .appointment-calendar-column {
+    @apply grid content-start gap-3 p-4;
+  }
+
+  .appointment-calendar-head {
+    @apply grid gap-1 border-b border-bayan-soft-border pb-3;
+  }
+
+  .appointment-calendar-head strong {
+    @apply text-sm font-black text-bayan-ink;
+  }
+
+  .appointment-calendar-head span {
+    @apply text-sm text-bayan-muted;
+  }
+
+  .appointment-calendar-list {
+    @apply grid gap-3;
+  }
+
+  .appointment-calendar-empty {
+    @apply rounded-2xl border border-dashed border-bayan-soft-border bg-slate-50/75 px-4 py-5 text-center text-sm text-bayan-muted;
+  }
+
+  .appointment-calendar-card {
+    @apply grid gap-1 rounded-2xl border border-bayan-soft-border bg-slate-50/80 px-3 py-3 text-left transition duration-150;
+  }
+
+  .appointment-calendar-card:hover,
+  .appointment-calendar-card.selected {
+    @apply border-bayan-teal bg-bayan-teal-soft/18;
+  }
+
+  .appointment-calendar-card strong,
+  .appointment-calendar-card span {
+    @apply text-sm font-black text-bayan-ink;
+  }
+
+  .appointment-calendar-card small {
+    @apply text-sm text-bayan-muted;
+  }
+
+  .appointment-timeline-item {
+    @apply grid gap-2 rounded-2xl border border-bayan-soft-border bg-slate-50/80 p-4;
+  }
+
+  .appointment-timeline-item strong {
+    @apply block text-sm font-black text-bayan-ink;
+  }
+
+  .appointment-timeline-item p,
+  .appointment-timeline-item span,
+  .appointment-timeline-item small {
+    @apply m-0 text-sm text-bayan-muted;
+  }
+
+  .appointment-success-panel {
+    @apply gap-4;
+  }
+
+  .tracking-hero,
+  .tracking-search-panel,
+  .complaint-hero,
+  .complaint-panel,
+  .complaint-summary-card,
+  .notification-hero {
+    @apply rounded-[22px] border border-bayan-border bg-white shadow-card;
+  }
+
+  .tracking-hero,
+  .notification-hero,
+  .complaint-hero {
+    @apply flex items-start justify-between gap-4 p-5;
+    background:
+      radial-gradient(circle at top right, rgba(246, 195, 67, 0.16), transparent 30%),
+      linear-gradient(135deg, rgba(15, 118, 110, 0.08), rgba(16, 34, 49, 0.03)),
+      #ffffff;
+  }
+
+  .tracking-hero-copy,
+  .notification-hero-copy,
+  .complaint-panel-head {
+    @apply grid gap-2;
+  }
+
+  .tracking-hero-copy h2,
+  .notification-hero-copy h2,
+  .complaint-panel-head h2 {
+    @apply m-0 text-[1.2rem] font-black text-bayan-ink;
+  }
+
+  .tracking-hero-copy p:not(.eyebrow),
+  .notification-hero-copy p:not(.eyebrow),
+  .complaint-panel-head p:not(.eyebrow) {
+    @apply m-0 text-sm leading-7 text-bayan-muted;
+  }
+
+  .tracking-sample-list {
+    @apply grid gap-2 sm:min-w-[240px];
+  }
+
+  .tracking-sample-chip {
+    @apply rounded-full border border-bayan-soft-border bg-white px-3 py-2 text-sm font-bold text-bayan-teal shadow-soft transition;
+  }
+
+  .tracking-sample-chip:hover {
+    @apply border-bayan-teal bg-bayan-teal-soft text-bayan-teal-dark;
+  }
+
+  .tracking-search-panel {
+    @apply grid gap-4 p-4;
+  }
+
+  .form-grid.tracking {
+    @apply grid gap-4 md:grid-cols-[minmax(0,1fr)_auto];
+  }
+
+  .tracking-search-actions {
+    @apply flex items-end;
+  }
+
+  .tracking-search-actions .button {
+    @apply min-w-[160px];
+  }
+
+  .complaint-form-shell {
+    @apply grid gap-5 lg:grid-cols-[minmax(0,1.45fr)_minmax(300px,0.9fr)];
+  }
+
+  .complaint-form-main {
+    @apply grid gap-5;
+  }
+
+  .complaint-panel,
+  .complaint-summary-card {
+    @apply grid gap-4 p-5;
+  }
+
+  .complaint-summary-card {
+    @apply content-start;
+  }
+
+  .complaint-history-grid {
+    @apply grid gap-4;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  .complaint-history-card {
+    @apply gap-4;
+  }
+
+  .complaint-admin-panel {
+    @apply gap-4;
+  }
+
+  .notification-hero-actions {
+    @apply flex flex-wrap gap-2;
+  }
+
+  .notification-card-list {
+    @apply grid gap-3;
+  }
+
+  .notification-card-list.compact {
+    @apply gap-2;
+  }
+
+  .notification-card {
+    @apply flex items-start gap-3 rounded-[20px] border border-bayan-border bg-white px-4 py-4 text-left shadow-soft transition duration-150;
+  }
+
+  .notification-card:hover {
+    @apply -translate-y-px border-bayan-teal;
+  }
+
+  .notification-card.unread {
+    background:
+      linear-gradient(135deg, rgba(15, 118, 110, 0.06), transparent 28%),
+      #ffffff;
+  }
+
+  .notification-card.compact {
+    @apply rounded-2xl px-3 py-3;
+  }
+
+  .notification-card-icon {
+    @apply grid h-10 w-10 flex-none place-items-center rounded-2xl bg-slate-100 text-bayan-muted;
+  }
+
+  .notification-card-icon.info {
+    @apply bg-blue-50 text-bayan-blue;
+  }
+
+  .notification-card-icon.warning {
+    @apply bg-amber-50 text-amber-700;
+  }
+
+  .notification-card-icon.danger {
+    @apply bg-bayan-danger-soft text-bayan-danger;
+  }
+
+  .notification-card-copy {
+    @apply grid min-w-0 flex-1 gap-2;
+  }
+
+  .notification-card-top {
+    @apply flex items-start justify-between gap-3;
+  }
+
+  .notification-card-top strong {
+    @apply block text-sm font-black text-bayan-ink;
+  }
+
+  .notification-card-top p {
+    @apply mt-1 mb-0 text-sm leading-6 text-bayan-muted;
+  }
+
+  .notification-card-meta {
+    @apply flex flex-wrap items-center justify-between gap-2 text-sm text-bayan-muted;
+  }
+
+  .notification-card-meta small,
+  .notification-card-meta span {
+    @apply text-sm text-bayan-muted;
+  }
+
+  .notification-empty-state {
+    @apply grid gap-1 rounded-[20px] border border-dashed border-bayan-soft-border bg-slate-50/85 px-4 py-5 text-center;
+  }
+
+  .notification-empty-state strong {
+    @apply text-sm font-black text-bayan-ink;
+  }
+
+  .notification-empty-state p {
+    @apply m-0 text-sm leading-6 text-bayan-muted;
+  }
+
+  .notification-footer {
+    @apply border-t border-bayan-soft-border pt-3;
+  }
+
   .article-meta {
     @apply flex flex-wrap gap-2;
   }
@@ -2295,7 +2826,11 @@
     .municipality-form-section-head,
     .municipality-section-head,
     .municipality-audit-top,
-    .document-timeline-top {
+    .document-timeline-top,
+    .tracking-hero,
+    .notification-hero,
+    .complaint-hero,
+    .notification-card-top {
       @apply flex-col items-stretch;
     }
 
@@ -2330,7 +2865,13 @@
     .document-request-shell,
     .document-review-grid,
     .document-detail-grid,
-    .document-module-hero {
+    .document-module-hero,
+    .appointment-booking-grid,
+    .appointment-detail-layout,
+    .appointment-admin-layout,
+    .appointment-review-grid,
+    .appointment-calendar-board,
+    .complaint-form-shell {
       @apply grid-cols-1;
     }
 
@@ -2343,7 +2884,12 @@
     .municipality-audit-change-grid,
     .document-service-meta,
     .document-history-meta,
-    .document-stepper {
+    .document-stepper,
+    .appointment-service-meta,
+    .appointment-history-meta,
+    .appointment-success-meta,
+    .appointment-availability-strip,
+    .tracking-sample-list {
       @apply grid-cols-1;
     }
 
@@ -2355,7 +2901,11 @@
     .form-actions .button,
     .hero-actions .button,
     .news-filter-actions .button,
-    .municipality-filter-actions .button {
+    .municipality-filter-actions .button,
+    .appointment-history-actions .button,
+    .appointment-admin-actions .button,
+    .tracking-search-actions .button,
+    .notification-hero-actions .button {
       @apply w-full;
     }
 
@@ -2565,7 +3115,11 @@
     .document-history-actions,
     .document-success-actions,
     .document-quick-action-row,
-    .document-form-footer {
+    .document-form-footer,
+    .appointment-admin-actions,
+    .appointment-history-actions,
+    .appointment-view-toggle,
+    .notification-hero-actions {
       @apply grid;
     }
 
@@ -2577,6 +3131,27 @@
 
     .notification-dropdown {
       @apply fixed top-[68px] right-3 left-3 w-auto;
+    }
+
+    .appointment-service-grid,
+    .appointment-history-grid,
+    .appointment-date-shortcuts,
+    .appointment-slot-grid,
+    .complaint-history-grid {
+      @apply grid-cols-1;
+    }
+
+    .appointment-panel,
+    .appointment-summary-card,
+    .appointment-history-card,
+    .appointment-calendar-column,
+    .complaint-panel,
+    .complaint-summary-card,
+    .tracking-hero,
+    .tracking-search-panel,
+    .notification-hero,
+    .complaint-hero {
+      @apply p-4;
     }
   }
 }

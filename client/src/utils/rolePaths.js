@@ -23,6 +23,12 @@ export function getComplaintPath(role) {
   return "/citizen/complaints";
 }
 
+export function getNotificationPath(role) {
+  if (role === "municipal_admin") return "/municipal/notifications";
+  if (role === "barangay_admin") return "/barangay/notifications";
+  return "/citizen/notifications";
+}
+
 export function getTrackingPath(role) {
   return role === "citizen" ? "/citizen/request-tracking" : getDocumentRequestPath(role);
 }

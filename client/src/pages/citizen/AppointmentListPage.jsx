@@ -1,48 +1,111 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ConfirmModal from "../../components/common/ConfirmModal.jsx";
-import DataTable from "../../components/common/DataTable.jsx";
+import EmptyState from "../../components/common/EmptyState.jsx";
 import ErrorState from "../../components/common/ErrorState.jsx";
 import FormField from "../../components/common/FormField.jsx";
 import LoadingState from "../../components/common/LoadingState.jsx";
 import PageHeader from "../../components/common/PageHeader.jsx";
 import SearchFilterBar from "../../components/common/SearchFilterBar.jsx";
+import StatCard from "../../components/common/StatCard.jsx";
 import StatusBadge from "../../components/common/StatusBadge.jsx";
-import { getAppointments, updateAppointment } from "../../services/appointmentService.js";
+import { getAppointments } from "../../services/appointmentService.js";
 import { formatDate, formatTimeSlot } from "../../utils/formatters.js";
+import {
+  canCitizenManageAppointment,
+  getAppointmentOutcomeLabel,
+  getAppointmentPolicyLabel,
+  getAppointmentReference,
+  getAppointmentScopeLabel,
+  getAppointmentStatusOptions,
+  isUpcomingAppointment,
+  sortAppointmentsBySchedule,
+} from "../../utils/appointmentUtils.js";
+import { appointmentServices } from "../../utils/serviceCatalog.js";
 
-const statusOptions = [
-  { value: "", label: "All statuses" },
-  { value: "pending", label: "Pending" },
-  { value: "confirmed", label: "Confirmed" },
-  { value: "completed", label: "Completed" },
-  { value: "cancelled", label: "Cancelled" },
-];
+function AppointmentHistoryCard({ item, onOpenDetails, onOpenReschedule, onOpenCancel }) {
+  const canManage = canCitizenManageAppointment(item);
+
+  return (
+    <article className="appointment-history-card">
+      <div className="appointment-history-top">
+        <div>
+          <p className="eyebrow">Reference {getAppointmentReference(item)}</p>
+          <h2>{item.serviceName}</h2>
+          <p>{getAppointmentOutcomeLabel(item)}</p>
+        </div>
+        <StatusBadge value={item.status} />
+      </div>
+
+      <div className="appointment-history-meta">
+        <div>
+          <small>Date</small>
+          <strong>{formatDate(item.date)}</strong>
+        </div>
+        <div>
+          <small>Time</small>
+          <strong>{formatTimeSlot(item.timeSlot)}</strong>
+        </div>
+        <div>
+          <small>Office</small>
+          <strong>{getAppointmentScopeLabel(item.scope)}</strong>
+        </div>
+        <div>
+          <small>Policy</small>
+          <strong>{getAppointmentPolicyLabel(item)}</strong>
+        </div>
+      </div>
+
+      <p className="appointment-history-purpose">{item.purpose}</p>
+
+      {item.linkedRequestId?.trackingNumber && (
+        <div className="appointment-inline-note">
+          <strong>Linked request:</strong>
+          <span>{item.linkedRequestId.trackingNumber}</span>
+        </div>
+      )}
+
+      <div className="appointment-history-actions">
+        <button className="button primary btn btn-success" onClick={onOpenDetails} type="button">
+          View details
+        </button>
+        {canManage && (
+          <>
+            <button className="button ghost btn btn-light" onClick={onOpenReschedule} type="button">
+              Reschedule
+            </button>
+            <button className="button ghost btn btn-light" onClick={onOpenCancel} type="button">
+              Cancel
+            </button>
+          </>
+        )}
+      </div>
+    </article>
+  );
+}
 
 export default function AppointmentListPage() {
   const navigate = useNavigate();
   const [items, setItems] = useState([]);
-  const [meta, setMeta] = useState({ page: 1, pages: 1, total: 0, limit: 10 });
-  const [filters, setFilters] = useState({ page: 1, limit: 10, status: "", search: "" });
+  const [filters, setFilters] = useState({
+    status: "",
+    serviceId: "",
+    search: "",
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [editing, setEditing] = useState(null);
-  const [cancelling, setCancelling] = useState(null);
-  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
-    const load = async () => {
+    const loadAppointments = async () => {
       try {
         setLoading(true);
         setError("");
         const response = await getAppointments("citizen", {
-          page: filters.page,
-          limit: filters.limit,
+          limit: 100,
           status: filters.status || undefined,
+          serviceId: filters.serviceId || undefined,
           search: filters.search || undefined,
         });
         setItems(Array.isArray(response.data) ? response.data : []);
-        setMeta(response.meta || { page: 1, pages: 1, total: 0, limit: 10 });
       } catch (requestError) {
         setError(requestError.response?.data?.message || "Failed to load appointments.");
       } finally {
@@ -50,103 +113,120 @@ export default function AppointmentListPage() {
       }
     };
 
-    load();
-  }, [filters, refreshKey]);
+    loadAppointments();
+  }, [filters]);
 
-  const handleReschedule = async () => {
-    if (!editing) return;
-
-    try {
-      setError("");
-      await updateAppointment("citizen", editing.item._id, editing.form);
-      setEditing(null);
-      setRefreshKey((current) => current + 1);
-    } catch (requestError) {
-      setError(requestError.response?.data?.message || "Failed to update the appointment.");
-    }
-  };
-
-  const handleCancel = async () => {
-    if (!cancelling) return;
-
-    try {
-      setError("");
-      await updateAppointment("citizen", cancelling._id, { status: "cancelled" });
-      setCancelling(null);
-      setRefreshKey((current) => current + 1);
-    } catch (requestError) {
-      setError(requestError.response?.data?.message || "Failed to cancel the appointment.");
-    }
-  };
+  const upcomingItems = sortAppointmentsBySchedule(items.filter((item) => isUpcomingAppointment(item)), "asc");
+  const historyItems = sortAppointmentsBySchedule(items.filter((item) => !isUpcomingAppointment(item)), "desc");
+  const pendingCount = items.filter((item) => item.status === "pending").length;
+  const confirmedCount = items.filter((item) => item.status === "confirmed").length;
+  const completedCount = items.filter((item) => item.status === "completed").length;
 
   return (
     <div className="page-stack">
-      <PageHeader action="Book Appointment" eyebrow="Citizen Services" onAction={() => navigate("/citizen/appointments/create")} title="Appointments" />
+      <PageHeader
+        action="Book Appointment"
+        description="Review your upcoming visits, office decisions, and completed appointments in one clear history view."
+        eyebrow="Citizen Services"
+        onAction={() => navigate("/citizen/appointments/create")}
+        title="Appointment History"
+      />
+
+      <div className="dashboard-mini-stat-grid appointment-stat-grid">
+        <StatCard caption="Waiting for office review" icon="calendar" label="Pending" tone="coral" value={pendingCount} />
+        <StatCard caption="Confirmed upcoming visits" icon="check" label="Confirmed" tone="blue" value={confirmedCount} />
+        <StatCard caption="Finished appointments" icon="file" label="Completed" tone="default" value={completedCount} />
+      </div>
 
       <SearchFilterBar>
-        <FormField label="Search" onChange={(event) => setFilters((current) => ({ ...current, search: event.target.value, page: 1 }))} placeholder="Service or purpose" value={filters.search} />
-        <FormField label="Status" onChange={(event) => setFilters((current) => ({ ...current, status: event.target.value, page: 1 }))} options={statusOptions} type="select" value={filters.status} />
+        <FormField
+          label="Search"
+          onChange={(event) => setFilters((current) => ({ ...current, search: event.target.value }))}
+          placeholder="Service, purpose, or notes"
+          value={filters.search}
+        />
+        <FormField
+          label="Service"
+          onChange={(event) => setFilters((current) => ({ ...current, serviceId: event.target.value }))}
+          options={[{ value: "", label: "All services" }, ...appointmentServices.map((service) => ({ value: service.value, label: service.label }))]}
+          type="select"
+          value={filters.serviceId}
+        />
+        <FormField
+          label="Status"
+          onChange={(event) => setFilters((current) => ({ ...current, status: event.target.value }))}
+          options={getAppointmentStatusOptions(true)}
+          type="select"
+          value={filters.status}
+        />
       </SearchFilterBar>
 
-      {loading && <LoadingState message="Loading appointments..." />}
+      {loading && <LoadingState message="Loading your appointments..." />}
       {error && <ErrorState message={error} />}
 
-      {!loading && (
-        <DataTable
-          columns={[
-            { key: "serviceName", label: "Service" },
-            { key: "date", label: "Date", render: (row) => formatDate(row.date) },
-            { key: "timeSlot", label: "Time", render: (row) => formatTimeSlot(row.timeSlot) },
-            { key: "status", label: "Status", render: (row) => <StatusBadge value={row.status} /> },
-            { key: "purpose", label: "Purpose" },
-          ]}
-          deleteLabel="Cancel"
-          emptyMessage="You do not have any appointments yet."
-          emptyTitle="No appointments"
-          onDelete={(row) => setCancelling(row)}
-          onEdit={(row) =>
-            setEditing({
-              item: row,
-              form: {
-                date: row.date.slice(0, 10),
-                timeSlot: row.timeSlot,
-                purpose: row.purpose,
-                notes: row.notes || "",
-              },
-            })
-          }
-          rows={items}
+      {!loading && !error && items.length === 0 && (
+        <EmptyState
+          actionLabel="Book Appointment"
+          icon="calendar"
+          message="Once you reserve an office visit, the full schedule and updates will appear here."
+          onAction={() => navigate("/citizen/appointments/create")}
+          title="No appointments yet"
         />
       )}
 
-      {!loading && (
-        <div className="pagination-bar">
-          <span>
-            Page {meta.page} of {meta.pages} - {meta.total} records
-          </span>
-          <div>
-            <button className="button ghost btn btn-light" disabled={meta.page <= 1} onClick={() => setFilters((current) => ({ ...current, page: current.page - 1 }))} type="button">
-              Previous
-            </button>
-            <button className="button ghost btn btn-light" disabled={meta.page >= meta.pages} onClick={() => setFilters((current) => ({ ...current, page: current.page + 1 }))} type="button">
-              Next
-            </button>
-          </div>
-        </div>
+      {!loading && !error && items.length > 0 && (
+        <>
+          <section className="appointment-section">
+            <div className="appointment-section-head">
+              <div>
+                <p className="eyebrow">Upcoming</p>
+                <h2>Your next visits</h2>
+                <p>These appointments are still active and may still be changed if the schedule window allows it.</p>
+              </div>
+            </div>
+            {upcomingItems.length > 0 ? (
+              <div className="appointment-history-grid">
+                {upcomingItems.map((item) => (
+                  <AppointmentHistoryCard
+                    item={item}
+                    key={item._id}
+                    onOpenCancel={() => navigate(`/citizen/appointments/${item._id}`, { state: { action: "cancel" } })}
+                    onOpenDetails={() => navigate(`/citizen/appointments/${item._id}`)}
+                    onOpenReschedule={() => navigate(`/citizen/appointments/${item._id}`, { state: { action: "reschedule" } })}
+                  />
+                ))}
+              </div>
+            ) : (
+              <EmptyState icon="calendar" message="No active appointments match the current filters." title="No upcoming appointments" />
+            )}
+          </section>
+
+          <section className="appointment-section">
+            <div className="appointment-section-head">
+              <div>
+                <p className="eyebrow">History</p>
+                <h2>Recent activity</h2>
+                <p>Completed and cancelled appointments stay here for reference, follow-up, and proof of office action.</p>
+              </div>
+            </div>
+            {historyItems.length > 0 ? (
+              <div className="appointment-history-grid">
+                {historyItems.map((item) => (
+                  <AppointmentHistoryCard
+                    item={item}
+                    key={item._id}
+                    onOpenCancel={() => navigate(`/citizen/appointments/${item._id}`)}
+                    onOpenDetails={() => navigate(`/citizen/appointments/${item._id}`)}
+                    onOpenReschedule={() => navigate(`/citizen/appointments/${item._id}`)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <EmptyState icon="file" message="Past and cancelled appointments will appear here once they exist." title="No appointment history yet" />
+            )}
+          </section>
+        </>
       )}
-
-      <ConfirmModal confirmLabel="Save schedule" message="Update the requested date, time, or notes for this appointment." onCancel={() => setEditing(null)} onConfirm={handleReschedule} open={Boolean(editing)} title="Reschedule Appointment">
-        {editing && (
-          <div className="modal-form">
-            <FormField label="Date" min={new Date().toISOString().slice(0, 10)} name="date" onChange={(event) => setEditing((current) => ({ ...current, form: { ...current.form, date: event.target.value } }))} type="date" value={editing.form.date} />
-            <FormField label="Time" name="timeSlot" onChange={(event) => setEditing((current) => ({ ...current, form: { ...current.form, timeSlot: event.target.value } }))} type="time" value={editing.form.timeSlot} />
-            <FormField label="Purpose" name="purpose" onChange={(event) => setEditing((current) => ({ ...current, form: { ...current.form, purpose: event.target.value } }))} rows="3" type="textarea" value={editing.form.purpose} />
-            <FormField label="Notes" name="notes" onChange={(event) => setEditing((current) => ({ ...current, form: { ...current.form, notes: event.target.value } }))} rows="3" type="textarea" value={editing.form.notes} />
-          </div>
-        )}
-      </ConfirmModal>
-
-      <ConfirmModal confirmLabel="Cancel appointment" message={`Cancel ${cancelling?.serviceName || "this appointment"}?`} onCancel={() => setCancelling(null)} onConfirm={handleCancel} open={Boolean(cancelling)} title="Cancel Appointment" />
     </div>
   );
 }

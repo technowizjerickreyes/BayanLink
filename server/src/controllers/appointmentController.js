@@ -3,6 +3,9 @@ import { getPagination } from "../utils/pagination.js";
 import { sendSuccess } from "../utils/apiResponse.js";
 import {
   createCitizenAppointment,
+  getAppointmentAvailability,
+  getCitizenAppointment,
+  getManagedAppointment,
   listCitizenAppointments,
   listManagedAppointments,
   updateCitizenAppointment,
@@ -30,6 +33,15 @@ export const addCitizenAppointment = asyncHandler(async (req, res) => {
   });
 });
 
+export const readCitizenAppointment = asyncHandler(async (req, res) => {
+  const item = await getCitizenAppointment({ user: req.user, id: req.params.id });
+
+  return sendSuccess(res, {
+    message: "Appointment loaded",
+    data: item,
+  });
+});
+
 export const editCitizenAppointment = asyncHandler(async (req, res) => {
   const item = await updateCitizenAppointment({ user: req.user, id: req.params.id, payload: req.validated.body });
 
@@ -47,6 +59,24 @@ export const browseManagedAppointments = asyncHandler(async (req, res) => {
     message: "Managed appointments loaded",
     data: result.items,
     meta: result.meta,
+  });
+});
+
+export const readManagedAppointment = asyncHandler(async (req, res) => {
+  const item = await getManagedAppointment({ user: req.user, id: req.params.id });
+
+  return sendSuccess(res, {
+    message: "Appointment loaded",
+    data: item,
+  });
+});
+
+export const browseAppointmentAvailability = asyncHandler(async (req, res) => {
+  const availability = await getAppointmentAvailability({ user: req.user, query: req.validated.query });
+
+  return sendSuccess(res, {
+    message: "Appointment availability loaded",
+    data: availability,
   });
 });
 

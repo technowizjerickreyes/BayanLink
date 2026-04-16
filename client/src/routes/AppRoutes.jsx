@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes, useParams } from "react-router-
 import DashboardLayout from "../components/layout/DashboardLayout.jsx";
 import LoginPage from "../pages/auth/LoginPage.jsx";
 import AppointmentCreatePage from "../pages/citizen/AppointmentCreatePage.jsx";
+import AppointmentDetailPage from "../pages/citizen/AppointmentDetailPage.jsx";
 import AppointmentListPage from "../pages/citizen/AppointmentListPage.jsx";
 import ComplaintCreatePage from "../pages/citizen/ComplaintCreatePage.jsx";
 import ComplaintListPage from "../pages/citizen/ComplaintListPage.jsx";
@@ -23,6 +24,7 @@ import NewsFeedCreatePage from "../pages/news/NewsFeedCreatePage.jsx";
 import NewsFeedEditPage from "../pages/news/NewsFeedEditPage.jsx";
 import NewsFeedListPage from "../pages/news/NewsFeedListPage.jsx";
 import NewsFeedViewPage from "../pages/news/NewsFeedViewPage.jsx";
+import NotificationsPage from "../pages/notifications/NotificationsPage.jsx";
 import RequestTrackingPage from "../pages/citizen/RequestTrackingPage.jsx";
 import MunicipalityCreate from "../pages/super-admin/MunicipalityCreate.jsx";
 import MunicipalityEdit from "../pages/super-admin/MunicipalityEdit.jsx";
@@ -70,6 +72,7 @@ export default function AppRoutes() {
               <Route path="/municipal/document-requests" element={<MunicipalDocumentRequestManagementPage />} />
               <Route path="/municipal/appointments" element={<MunicipalAppointmentManagementPage />} />
               <Route path="/municipal/complaints" element={<MunicipalComplaintManagementPage />} />
+              <Route path="/municipal/notifications" element={<NotificationsPage />} />
               <Route path="/municipal/news-feeds" element={<NewsFeedListPage />} />
               <Route path="/municipal/news-feeds/create" element={<NewsFeedCreatePage />} />
               <Route path="/municipal/news-feeds/:id" element={<NewsFeedViewPage />} />
@@ -81,6 +84,7 @@ export default function AppRoutes() {
               <Route path="/barangay/document-requests" element={<BarangayDocumentRequestManagementPage />} />
               <Route path="/barangay/appointments" element={<BarangayAppointmentManagementPage />} />
               <Route path="/barangay/complaints" element={<BarangayComplaintManagementPage />} />
+              <Route path="/barangay/notifications" element={<NotificationsPage />} />
               <Route path="/barangay/news-feeds" element={<NewsFeedListPage />} />
               <Route path="/barangay/news-feeds/create" element={<NewsFeedCreatePage />} />
               <Route path="/barangay/news-feeds/:id" element={<NewsFeedViewPage />} />
@@ -96,9 +100,11 @@ export default function AppRoutes() {
               <Route path="/citizen/request-tracking" element={<RequestTrackingPage />} />
               <Route path="/citizen/appointments" element={<AppointmentListPage />} />
               <Route path="/citizen/appointments/create" element={<AppointmentCreatePage />} />
+              <Route path="/citizen/appointments/:id" element={<AppointmentDetailPage />} />
               <Route path="/citizen/complaints" element={<ComplaintListPage />} />
               <Route path="/citizen/complaints/create" element={<ComplaintCreatePage />} />
               <Route path="/citizen/complaints/:id" element={<ComplaintViewPage />} />
+              <Route path="/citizen/notifications" element={<NotificationsPage />} />
               <Route path="/citizen/news-feed" element={<NewsFeedListPage />} />
               <Route path="/citizen/news-feed/:id" element={<NewsFeedViewPage />} />
             </Route>
