@@ -7,13 +7,25 @@
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js",
-    "check": "node --check server.js"
+    "check": "node --check server.js",
+    "seed:roles": "node src/scripts/seedRoles.js",
+    "seed:super-admin": "node src/scripts/seedSuperAdmin.js",
+    "seed:municipalities": "node src/scripts/seedMunicipalities.js",
+    "seed:portal-users": "node src/scripts/seedPortalUsers.js",
+    "seed:phase1": "node src/scripts/seedPhase1Services.js"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
     "cors": "latest",
     "dotenv": "latest",
     "express": "latest",
-    "mongoose": "latest"
+    "express-rate-limit": "^8.3.2",
+    "express-validator": "^7.3.2",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "latest",
+    "multer": "^2.0.2"
   },
   "devDependencies": {
     "nodemon": "latest"

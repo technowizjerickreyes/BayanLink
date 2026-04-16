@@ -1,6 +1,15 @@
 import Icon from "./Icon.jsx";
 
-export default function ConfirmModal({ open, title, message, confirmLabel = "Delete", onConfirm, onCancel }) {
+export default function ConfirmModal({
+  open,
+  title,
+  message,
+  confirmLabel = "Delete",
+  confirmTone = "danger",
+  onConfirm,
+  onCancel,
+  children,
+}) {
   if (!open) return null;
 
   return (
@@ -11,11 +20,12 @@ export default function ConfirmModal({ open, title, message, confirmLabel = "Del
         </button>
         <h2>{title}</h2>
         <p>{message}</p>
+        {children}
         <div className="modal-actions">
           <button className="button ghost btn btn-light" onClick={onCancel} type="button">
             Cancel
           </button>
-          <button className="button danger btn btn-danger" onClick={onConfirm} type="button">
+          <button className={`button ${confirmTone} btn ${confirmTone === "primary" ? "btn-success" : "btn-danger"}`} onClick={onConfirm} type="button">
             {confirmLabel}
           </button>
         </div>
