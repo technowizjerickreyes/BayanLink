@@ -21,10 +21,30 @@ function requiredSecret(name) {
 }
 
 function parseOrigins(value) {
-  return (value || "http://localhost:5173,http://127.0.0.1:5173")
-    .split(",")
-    .map((origin) => origin.trim())
-    .filter(Boolean);
+  if (value) {
+    return value
+      .split(",")
+      .map((origin) => origin.trim())
+      .filter(Boolean);
+  }
+
+  if (isProduction) {
+    return [];
+  }
+
+  return ["http://localhost:5173", "http://127.0.0.1:5173"];
+}
+
+function parseAuthCookieSameSite(value) {
+  const normalized = String(value || "")
+    .trim()
+    .toLowerCase();
+
+  if (normalized === "strict" || normalized === "lax" || normalized === "none") {
+    return normalized;
+  }
+
+  return isProduction ? "strict" : "lax";
 }
 
 export const env = {
@@ -33,6 +53,7 @@ export const env = {
   port: process.env.PORT || 5000,
   mongoUri: process.env.MONGO_URI || "",
   corsOrigins: parseOrigins(process.env.CORS_ORIGINS),
+  authCookieSameSite: parseAuthCookieSameSite(process.env.AUTH_COOKIE_SAMESITE),
   jwtAccessSecret: requiredSecret("JWT_ACCESS_SECRET"),
   jwtRefreshSecret: requiredSecret("JWT_REFRESH_SECRET"),
   accessTokenTtl: process.env.JWT_ACCESS_TTL || "15m",

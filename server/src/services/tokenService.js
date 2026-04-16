@@ -92,7 +92,7 @@ export function authCookieOptions(maxAge) {
   return {
     httpOnly: true,
     secure: env.isProduction,
-    sameSite: env.isProduction ? "strict" : "lax",
+    sameSite: env.authCookieSameSite,
     domain: env.cookieDomain,
     path: "/",
     maxAge,

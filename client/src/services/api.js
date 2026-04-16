@@ -1,7 +1,28 @@
 import axios from "axios";
 
+function resolveApiBaseUrl() {
+  const raw = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL;
+  const trimmed = typeof raw === "string" ? raw.trim().replace(/\/$/, "") : "";
+
+  if (trimmed) {
+    return trimmed;
+  }
+
+  if (import.meta.env.DEV) {
+    return "http://localhost:5000/api";
+  }
+
+  if (import.meta.env.PROD) {
+    console.error(
+      "[BayanLink] Set VITE_API_BASE_URL (preferred) or VITE_API_URL in the Netlify build environment. Example: https://api.example.com/api"
+    );
+  }
+
+  return "";
+}
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
+  baseURL: resolveApiBaseUrl(),
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
