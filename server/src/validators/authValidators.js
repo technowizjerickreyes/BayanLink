@@ -39,3 +39,37 @@ export const loginValidators = [
   body("email").isEmail().withMessage("Invalid credentials").normalizeEmail(),
   body("password").isString().isLength({ min: 1 }).withMessage("Invalid credentials"),
 ];
+
+export const resetPasswordAllowedFields = [
+  "currentPassword",
+  "newPassword",
+  "newPasswordConfirm",
+];
+
+export const resetPasswordValidators = [
+  body("newPassword")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters long")
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+    .withMessage("Password must include uppercase, lowercase, and number"),
+  body("newPasswordConfirm").custom((value, { req }) => {
+    if (value !== req.body.newPassword) {
+      throw new Error("Password confirmation does not match");
+    }
+    return true;
+  }),
+];
+
+export const adminResetPasswordValidators = [
+  body("newPassword")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters long")
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+    .withMessage("Password must include uppercase, lowercase, and number"),
+  body("newPasswordConfirm").custom((value, { req }) => {
+    if (value !== req.body.newPassword) {
+      throw new Error("Password confirmation does not match");
+    }
+    return true;
+  }),
+];

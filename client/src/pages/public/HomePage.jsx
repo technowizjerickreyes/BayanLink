@@ -78,33 +78,39 @@ export default function HomePage() {
         </div>
         
         {/* Content */}
-        <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
+        <div className="relative z-10 text-center text-white px-4 max-w-5xl mx-auto">
           {/* Logo */}
-          <div className="mb-8">
-            <img src="/logo.png" className="w-24 mx-auto mb-4" alt="Aliaga Municipal Logo" />
+          <div className="mb-12">
+            <img src="/logo.png" className="w-20 mx-auto mb-6" alt="Aliaga Municipal Logo" />
           </div>
           
           {/* Title and Subtitle */}
-          <h1 className="text-4xl md:text-6xl font-black mb-6 leading-tight">
-            BayanLink Aliaga
-          </h1>
-          <p className="text-xl md:text-2xl mb-12 text-blue-100 max-w-3xl mx-auto leading-relaxed">
-            Municipal Citizen Engagement System
-          </p>
+          <div className="mb-12">
+            <h1 className="text-5xl md:text-7xl font-light mb-4 leading-tight tracking-tight">
+              BayanLink
+            </h1>
+            <h2 className="text-3xl md:text-4xl font-light mb-8 text-gray-200">
+              Municipality of Aliaga
+            </h2>
+            <p className="text-lg md:text-xl max-w-3xl mx-auto leading-relaxed text-gray-300 font-light">
+              Official Digital Platform for Municipal Services and Citizen Engagement
+            </p>
+          </div>
           
-          {/* Portal Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="/citizen/login" className="btn-primary">
-              Citizen Portal
-            </a>
-
-            <a href="/barangay/login" className="btn-secondary">
-              Barangay Portal
-            </a>
-
-            <a href="/super-admin/login" className="btn-accent">
-              Admin Portal
-            </a>
+          {/* Portal Access */}
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8 border border-white/20">
+            <h3 className="text-xl font-semibold mb-6 text-white">Portal Access</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <a href="/citizen/login" className="btn-primary justify-center">
+                Citizen Services
+              </a>
+              <a href="/barangay/login" className="btn-secondary justify-center">
+                Barangay Admin
+              </a>
+              <a href="/super-admin/login" className="btn-accent justify-center">
+                System Admin
+              </a>
+            </div>
           </div>
           
           {/* Quick Links */}

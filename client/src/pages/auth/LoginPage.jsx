@@ -254,21 +254,21 @@ export default function LoginPage({ portalRole = "" }) {
         </div>
 
           {/* Right Side - Login Form */}
-        <div className="lg:w-1/2 bg-white flex items-center justify-center p-8 lg:p-12">
-          <div className="w-full max-w-md p-8 shadow-xl rounded-2xl">
+        <div className="lg:w-1/2 bg-gray-50 flex items-center justify-center p-8 lg:p-12">
+          <div className="w-full max-w-md bg-white rounded-lg shadow-sm border border-gray-200 p-8">
             {/* Logo */}
-            <img src="/logo.png" className="w-16 mx-auto mb-6" alt="Aliaga Municipal Logo" />
+            <div className="text-center mb-8">
+              <img src="/logo.png" className="w-16 mx-auto mb-4" alt="Aliaga Municipal Logo" />
+              <div className="border-t border-gray-200 pt-4"></div>
+            </div>
 
             {/* Form Header */}
             <div className="mb-8">
-              <p className="text-blue-600 font-semibold text-sm uppercase tracking-wide mb-2">
-                Secure Access
-              </p>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                {portal.signInTitle}
+              <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+                Sign In
               </h2>
-              <p className="text-gray-600">
-                {portal.signInDescription}
+              <p className="text-sm text-gray-600">
+                Enter your credentials to access the {portal.title.toLowerCase()}
               </p>
             </div>
 

@@ -40,25 +40,30 @@ const users = [
   },
 ];
 
-for (const user of users) {
-  await User.findOneAndUpdate(
-    { email: user.email },
-    {
-      $set: {
-        ...user,
-        password: defaultPassword, // User model middleware will hash this automatically
-        phone: "+63 900 000 0000",
-        status: "active",
-        failedLoginCount: 0,
-        lockUntil: null,
-      },
-    },
-    {
-      upsert: true,
-      runValidators: true,
-      returnDocument: "after",
-    }
-  );
+for (const userData of users) {
+  const existingUser = await User.findOne({ email: userData.email });
+  
+  if (existingUser) {
+    // Update existing user - password will be hashed by pre-save hook
+    existingUser.fullName = userData.fullName;
+    existingUser.role = userData.role;
+    existingUser.municipalityId = userData.municipalityId;
+    existingUser.barangayId = userData.barangayId;
+    existingUser.password = defaultPassword; // This will trigger pre-save hook
+    existingUser.phone = "+63 900 000 0000";
+    existingUser.status = "active";
+    existingUser.failedLoginCount = 0;
+    existingUser.lockUntil = null;
+    await existingUser.save();
+  } else {
+    // Create new user - password will be hashed by pre-save hook
+    await User.create({
+      ...userData,
+      password: defaultPassword, // This will trigger pre-save hook
+      phone: "+63 900 000 0000",
+      status: "active",
+    });
+  }
 }
 
 console.log(`Seeded ${users.length} portal test users for ${municipality.name}.`);

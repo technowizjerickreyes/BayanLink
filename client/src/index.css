@@ -34,12 +34,14 @@
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     
-    /* Aliaga Municipal Branding Colors */
-    --primary: #2563eb;
-    --secondary: #16a34a;
-    --accent: #f59e0b;
-    --bg: #f8fafc;
-    --text: #1e293b;
+    /* Professional Government Color Scheme */
+    --primary: #1E3A8A; /* Deep Blue - Government Authority */
+    --secondary: #047857; /* Professional Green - Growth */
+    --accent: #B45309; /* Sophisticated Amber */
+    --dark: #111827; /* Professional Dark */
+    --bg: #F9FAFB; /* Clean Light Background */
+    --text: #1F2937; /* Professional Text */
+    --border: #E5E7EB; /* Subtle Borders */
   }
 
   * {
@@ -138,86 +140,100 @@
     @apply m-0 text-lg font-bold text-bayan-ink;
   }
 
-  /* Modern Button Styles */
+  /* Professional Corporate Button Styles */
   .btn-primary {
     background: var(--primary);
-    padding: 12px 20px;
-    border-radius: 12px;
+    padding: 14px 24px;
+    border-radius: 8px;
     color: white;
-    font-weight: bold;
-    transition: all 0.3s ease;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
     border: none;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
+    letter-spacing: 0.025em;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
   .btn-primary:hover {
-    background: #1d4ed8;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    background: #1E40AF;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transform: translateY(0);
   }
 
   .btn-secondary {
     background: var(--secondary);
-    padding: 12px 20px;
-    border-radius: 12px;
+    padding: 14px 24px;
+    border-radius: 8px;
     color: white;
-    font-weight: bold;
-    transition: all 0.3s ease;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
     border: none;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
+    letter-spacing: 0.025em;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
   .btn-secondary:hover {
-    background: #15803d;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+    background: #065F46;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transform: translateY(0);
   }
 
   .btn-accent {
     background: var(--accent);
-    padding: 12px 20px;
-    border-radius: 12px;
+    padding: 14px 24px;
+    border-radius: 8px;
     color: white;
-    font-weight: bold;
-    transition: all 0.3s ease;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
     border: none;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
+    letter-spacing: 0.025em;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
   .btn-accent:hover {
-    background: #d97706;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    background: #92400E;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transform: translateY(0);
   }
 
-  /* Modern Input Styles */
+  /* Professional Input Styles */
   .input {
     width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-    font-size: 16px;
-    transition: all 0.3s ease;
+    padding: 12px 16px;
+    margin-top: 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    font-size: 14px;
+    transition: all 0.2s ease;
     background: white;
+    color: var(--text);
   }
 
   .input:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+  }
+
+  .input::placeholder {
+    color: #9CA3AF;
   }
 }
 

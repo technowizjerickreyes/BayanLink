@@ -100,50 +100,47 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        {/* Announcements / News Feed Section */}
+        {/* Municipal Communications */}
         <section className="mb-8">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-            <h2 className="text-xl font-bold mb-4 text-gray-900">📢 Municipal Announcements</h2>
-            
-            <div className="space-y-4">
-              <div className="border-b border-gray-100 pb-3">
-                <div className="flex items-start gap-3">
-                  <span className="text-lg">💬</span>
-                  <div>
-                    <h3 className="font-semibold text-gray-900">Distribution of ayuda tomorrow</h3>
-                    <p className="text-sm text-gray-600">Please proceed to your respective barangay halls for the scheduled cash assistance distribution.</p>
-                    <p className="text-xs text-gray-500 mt-1">Posted 2 hours ago</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="border-b border-gray-100 pb-3">
-                <div className="flex items-start gap-3">
-                  <span className="text-lg">🚧</span>
-                  <div>
-                    <h3 className="font-semibold text-gray-900">Road repair at Barangay 3</h3>
-                    <p className="text-sm text-gray-600">Major road rehabilitation project will start next week. Please expect traffic rerouting.</p>
-                    <p className="text-xs text-gray-500 mt-1">Posted 5 hours ago</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="pb-3">
-                <div className="flex items-start gap-3">
-                  <span className="text-lg">🏥</span>
-                  <div>
-                    <h3 className="font-semibold text-gray-900">Free medical clinic on Saturday</h3>
-                    <p className="text-sm text-gray-600">RHU will conduct free medical check-ups and vaccination at the municipal gymnasium.</p>
-                    <p className="text-xs text-gray-500 mt-1">Posted 1 day ago</p>
-                  </div>
-                </div>
-              </div>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900">Official Communications</h2>
             </div>
-            
-            <div className="mt-4 text-center">
-              <button className="btn-secondary text-sm">
-                View All Announcements
-              </button>
+            <div className="p-6">
+              <div className="space-y-4">
+                <div className="flex items-start gap-4 pb-4 border-b border-gray-100">
+                  <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                  <div className="flex-1">
+                    <h3 className="font-medium text-gray-900 mb-1">Public Assistance Distribution Schedule</h3>
+                    <p className="text-sm text-gray-600 mb-2">Scheduled distribution of social amelioration assistance will proceed as planned at designated barangay centers.</p>
+                    <p className="text-xs text-gray-500">Posted 2 hours ago • Municipal Social Welfare Office</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-4 pb-4 border-b border-gray-100">
+                  <div className="w-2 h-2 bg-green-600 rounded-full mt-2 flex-shrink-0"></div>
+                  <div className="flex-1">
+                    <h3 className="font-medium text-gray-900 mb-1">Infrastructure Development Notice</h3>
+                    <p className="text-sm text-gray-600 mb-2">Road rehabilitation and drainage improvement projects will commence in Barangay San Juan next week.</p>
+                    <p className="text-xs text-gray-500">Posted 5 hours ago • Municipal Engineering Office</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-4">
+                  <div className="w-2 h-2 bg-amber-600 rounded-full mt-2 flex-shrink-0"></div>
+                  <div className="flex-1">
+                    <h3 className="font-medium text-gray-900 mb-1">Health Services Announcement</h3>
+                    <p className="text-sm text-gray-600 mb-2">Free medical consultation and vaccination services available at the Rural Health Unit every Saturday.</p>
+                    <p className="text-xs text-gray-500">Posted 1 day ago • Municipal Health Office</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6 pt-4 border-t border-gray-200">
+                <button className="btn-secondary text-sm">
+                  View All Communications
+                </button>
+              </div>
             </div>
           </div>
         </section>

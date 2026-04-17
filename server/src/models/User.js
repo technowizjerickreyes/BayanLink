@@ -85,8 +85,12 @@ userSchema.index({ role: 1, municipalityId: 1, barangayId: 1, status: 1 });
 
 userSchema.pre("save", async function hashPassword(next) {
   if (!this.isModified("password")) return next();
-  this.password = await bcrypt.hash(this.password, PASSWORD_HASH_ROUNDS);
-  next();
+  try {
+    this.password = await bcrypt.hash(this.password, PASSWORD_HASH_ROUNDS);
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 userSchema.pre("validate", function requireScopedRole() {

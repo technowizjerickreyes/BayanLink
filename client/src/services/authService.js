@@ -30,3 +30,16 @@ export const getMe = async () => {
   const { data } = await api.get("/auth/me");
   return data;
 };
+
+// NEW: Password reset functions
+export const resetPassword = async (userId, payload) => {
+  const endpoint = `/auth/reset-my-password`; // Uses current user from token
+  const { data } = await api.post(endpoint, payload);
+  return data;
+};
+
+export const adminResetPassword = async (email, payload) => {
+  const { data } = await api.post(`/auth/admin-reset/${email}`, payload);
+  return data;
+};
+

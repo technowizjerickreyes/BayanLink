@@ -146,6 +146,42 @@ export async function refreshSession(req, rawRefreshToken) {
   };
 }
 
+export async function resetPassword(userId, { newPassword, currentPassword }) {
+  const user = await User.findById(userId).select("+password");
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  // If current password is provided, verify it (for user-initiated password changes)
+  if (currentPassword) {
+    const currentPasswordValid = await user.comparePassword(currentPassword);
+    if (!currentPasswordValid) {
+      throw new ApiError(401, "Current password is incorrect");
+    }
+  }
+
+  // Set new password - this will trigger the pre-save hook for hashing
+  user.password = newPassword;
+  await user.save();
+
+  return serializeUser(user);
+}
+
+export async function adminResetPassword(userEmail, { newPassword }) {
+  const user = await User.findOne({ email: userEmail });
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  // Set new password - this will trigger the pre-save hook for hashing
+  user.password = newPassword;
+  await user.save();
+
+  return serializeUser(user);
+}
+
 export function getCurrentUser(user) {
   return serializeUser(user);
 }
