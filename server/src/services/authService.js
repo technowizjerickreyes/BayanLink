@@ -75,9 +75,9 @@ export async function registerCitizen(payload) {
   const user = await User.create({
     email: payload.email,
     passwordHash,
-    firstName: payload.firstName,
-    lastName: payload.lastName,
+    fullName: payload.fullName,
     phone: payload.phone || "",
+    affiliate: payload.affiliate || "",
     municipalityId: payload.municipalityId,
     barangayId: payload.barangayId,
     role: "citizen",

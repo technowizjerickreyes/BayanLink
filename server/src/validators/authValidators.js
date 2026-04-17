@@ -7,9 +7,9 @@ export const registerAllowedFields = [
   "email",
   "password",
   "passwordConfirm",
-  "firstName",
-  "lastName",
+  "fullName",
   "phone",
+  "affiliate",
   "municipalityId",
   "barangayId",
 ];
@@ -28,9 +28,9 @@ export const citizenRegisterValidators = [
 
     return true;
   }),
-  body("firstName").trim().isLength({ min: 1, max: 80 }).withMessage("First name is required"),
-  body("lastName").trim().isLength({ min: 1, max: 80 }).withMessage("Last name is required"),
+  body("fullName").trim().isLength({ min: 1, max: 160 }).withMessage("Full name is required"),
   body("phone").optional({ values: "falsy" }).trim().matches(phonePattern).withMessage("Phone number must be valid"),
+  body("affiliate").optional({ values: "falsy" }).trim().isLength({ max: 140 }).withMessage("Affiliate name is invalid"),
   body("municipalityId").isMongoId().withMessage("Municipality is required"),
   body("barangayId").trim().isLength({ min: 1, max: 80 }).withMessage("Barangay is required"),
 ];
