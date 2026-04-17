@@ -1,6 +1,10 @@
 import { BrowserRouter, Navigate, Route, Routes, useParams } from "react-router-dom";
 import DashboardLayout from "../components/layout/DashboardLayout.jsx";
+import PublicLayout from "../components/layout/PublicLayout.jsx";
 import LoginPage from "../pages/auth/LoginPage.jsx";
+import HomePage from "../pages/public/HomePage.jsx";
+import AboutPage from "../pages/public/AboutPage.jsx";
+import ServicesPage from "../pages/public/ServicesPage.jsx";
 import AppointmentCreatePage from "../pages/citizen/AppointmentCreatePage.jsx";
 import AppointmentDetailPage from "../pages/citizen/AppointmentDetailPage.jsx";
 import AppointmentListPage from "../pages/citizen/AppointmentListPage.jsx";
@@ -44,9 +48,17 @@ export default function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public Routes - No Authentication Required */}
+        <Route element={<PublicLayout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/news" element={<NewsFeedListPage />} />
+        </Route>
+
+        {/* Auth Routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/citizen/login" element={<LoginPage portalRole="citizen" />} />
-        <Route path="/barangay/login" element={<LoginPage portalRole="barangay_admin" />} />
         <Route path="/municipal/login" element={<LoginPage portalRole="municipal_admin" />} />
         <Route path="/municipal-admin/login" element={<LoginPage portalRole="municipal_admin" />} />
         <Route path="/super-admin/login" element={<LoginPage portalRole="super_admin" />} />

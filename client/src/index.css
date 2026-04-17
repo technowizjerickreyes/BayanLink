@@ -21,6 +21,9 @@
   --color-bayan-danger-dark: #8d1d14;
   --color-bayan-danger-soft: #fff0ec;
   --color-bayan-danger-border: #f3b4aa;
+  --color-aliaga-primary: #0f766e;
+  --color-aliaga-secondary: #102231;
+  --color-aliaga-accent: #f6c343;
   --shadow-card: 0 14px 34px rgba(16, 34, 49, 0.07);
   --shadow-soft: 0 8px 20px rgba(16, 34, 49, 0.05);
 }

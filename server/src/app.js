@@ -5,6 +5,7 @@ import helmet from "helmet";
 import { env } from "./config/env.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import publicRoutes from "./routes/publicRoutes.js";
 import barangayRoutes from "./routes/barangayRoutes.js";
 import citizenRoutes from "./routes/citizenRoutes.js";
 import municipalRoutes from "./routes/municipalRoutes.js";
@@ -49,6 +50,9 @@ app.get("/", (_req, res) => {
 app.get("/api/health", (_req, res) => {
   res.status(200).json({ success: true, message: "BayanLink API is running" });
 });
+
+// Public API routes (no authentication required)
+app.use("/api/public", publicRoutes);
 
 app.use("/api/auth", requireDatabase, authRoutes);
 app.use("/api/super-admin", requireDatabase, superAdminRoutes);

@@ -34,17 +34,17 @@ export default function Sidebar({ open, onClose }) {
     <>
       <aside className={`sidebar ${open ? "open" : ""}`}>
         <div className="brand">
-          <span className="brand-mark">BL</span>
+          <span className="brand-mark">A</span>
           <div>
             <strong>BayanLink</strong>
-            <small>{portalName}</small>
+            <small>Aliaga Portal</small>
           </div>
         </div>
 
         <div className="sidebar-status">
           <span />
           <div>
-            <strong>Secure workspace</strong>
+            <strong>Aliaga Municipality</strong>
             <small>{primaryLinks.length} modules ready</small>
           </div>
         </div>
