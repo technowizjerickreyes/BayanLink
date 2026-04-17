@@ -4,28 +4,28 @@
   --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --color-bayan-ink: #111827;
   --color-bayan-panel: #ffffff;
-  --color-bayan-surface: #f3f6f8;
+  --color-bayan-surface: #f8fafc;
   --color-bayan-border: #dbe3e8;
   --color-bayan-soft-border: #edf2f5;
   --color-bayan-muted: #5d6b75;
   --color-bayan-muted-2: #aeb9c1;
-  --color-bayan-teal: #0f766e;
-  --color-bayan-teal-dark: #0b5f59;
-  --color-bayan-teal-soft: #e7f5f3;
-  --color-bayan-navy: #102231;
-  --color-bayan-navy-2: #19364a;
-  --color-bayan-yellow: #f6c343;
+  --color-bayan-teal: #16a34a;
+  --color-bayan-teal-dark: #15803d;
+  --color-bayan-teal-soft: #dcfce7;
+  --color-bayan-navy: #1e40af;
+  --color-bayan-navy-2: #1d4ed8;
+  --color-bayan-yellow: #f59e0b;
   --color-bayan-coral: #e76f51;
-  --color-bayan-blue: #3d6f99;
+  --color-bayan-blue: #2563eb;
   --color-bayan-danger: #b42318;
   --color-bayan-danger-dark: #8d1d14;
   --color-bayan-danger-soft: #fff0ec;
   --color-bayan-danger-border: #f3b4aa;
-  --color-aliaga-primary: #0f766e;
-  --color-aliaga-secondary: #102231;
-  --color-aliaga-accent: #f6c343;
-  --shadow-card: 0 14px 34px rgba(16, 34, 49, 0.07);
-  --shadow-soft: 0 8px 20px rgba(16, 34, 49, 0.05);
+  --color-aliaga-primary: #2563eb;
+  --color-aliaga-secondary: #16a34a;
+  --color-aliaga-accent: #f59e0b;
+  --shadow-card: 0 14px 34px rgba(37, 99, 235, 0.1);
+  --shadow-soft: 0 8px 20px rgba(37, 99, 235, 0.08);
 }
 
 @layer base {
@@ -33,6 +33,13 @@
     @apply bg-bayan-surface text-bayan-ink font-sans;
     font-synthesis: none;
     text-rendering: optimizeLegibility;
+    
+    /* Aliaga Municipal Branding Colors */
+    --primary: #2563eb;
+    --secondary: #16a34a;
+    --accent: #f59e0b;
+    --bg: #f8fafc;
+    --text: #1e293b;
   }
 
   * {
@@ -43,7 +50,7 @@
     @apply m-0 min-h-screen min-w-80;
     background:
       linear-gradient(135deg, rgba(15, 118, 110, 0.08), transparent 34%),
-      linear-gradient(180deg, #f8fafb 0%, #eef4f6 100%);
+      linear-gradient(225deg, rgba(37, 99, 235, 0.08), transparent 34%);
   }
 
   button,
@@ -63,6 +70,43 @@
 
   a {
     @apply text-inherit no-underline;
+  }
+
+  a:hover,
+  a:focus,
+  a:active,
+  a:visited {
+    @apply no-underline;
+  }
+
+  /* Override Bootstrap link styles completely */
+  a:not([class]) {
+    @apply text-inherit no-underline;
+  }
+
+  a:not([class]):hover,
+  a:not([class]):focus,
+  a:not([class]):active {
+    @apply no-underline;
+  }
+
+  /* Override any remaining Bootstrap blue text */
+  .text-primary {
+    @apply text-bayan-teal;
+  }
+
+  .text-info {
+    @apply text-bayan-teal;
+  }
+
+  /* Remove all underlines from any element */
+  u, ins {
+    @apply no-underline;
+  }
+
+  /* Ensure no blue text from Bootstrap */
+  .text-blue-500, .text-blue-600, .text-blue-700, .text-blue-800, .text-blue-900 {
+    @apply text-bayan-teal;
   }
 
   table {
@@ -92,6 +136,88 @@
 
   dd {
     @apply m-0 text-lg font-bold text-bayan-ink;
+  }
+
+  /* Modern Button Styles */
+  .btn-primary {
+    background: var(--primary);
+    padding: 12px 20px;
+    border-radius: 12px;
+    color: white;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  .btn-primary:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  }
+
+  .btn-secondary {
+    background: var(--secondary);
+    padding: 12px 20px;
+    border-radius: 12px;
+    color: white;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  .btn-secondary:hover {
+    background: #15803d;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+  }
+
+  .btn-accent {
+    background: var(--accent);
+    padding: 12px 20px;
+    border-radius: 12px;
+    color: white;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  .btn-accent:hover {
+    background: #d97706;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+  }
+
+  /* Modern Input Styles */
+  .input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background: white;
+  }
+
+  .input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
   }
 }
 
@@ -420,11 +546,11 @@
   }
 
   .login-link-button {
-    @apply border-0 bg-transparent p-0 text-sm font-bold text-bayan-teal underline-offset-4 transition;
+    @apply border-0 bg-transparent p-0 text-sm font-bold text-bayan-teal transition;
   }
 
   .login-link-button:hover {
-    @apply text-bayan-teal-dark underline;
+    @apply text-bayan-teal-dark;
   }
 
   .login-helper-note {
@@ -662,7 +788,7 @@
 
   .stat-tile.blue .stat-icon,
   .stat-card.blue .stat-icon {
-    @apply bg-blue-50 text-bayan-blue;
+    @apply bg-blue-50 text-bayan-teal;
   }
 
   .stat-tile.coral .stat-icon,
@@ -735,7 +861,7 @@
   }
 
   .quick-action-card.default:hover {
-    @apply border-bayan-blue;
+    @apply border-bayan-teal;
   }
 
   .quick-action-icon {
@@ -743,7 +869,7 @@
   }
 
   .quick-action-card.blue .quick-action-icon {
-    @apply bg-blue-50 text-bayan-blue;
+    @apply bg-blue-50 text-bayan-teal;
   }
 
   .quick-action-card.coral .quick-action-icon {
@@ -813,7 +939,7 @@
   }
 
   .dashboard-mini-stat.blue .dashboard-mini-stat-icon {
-    @apply bg-blue-50 text-bayan-blue;
+    @apply bg-blue-50 text-bayan-teal;
   }
 
   .dashboard-mini-stat.coral .dashboard-mini-stat-icon {
@@ -1428,7 +1554,7 @@
   }
 
   .news-scope-pill.municipality {
-    @apply bg-blue-50 text-bayan-blue;
+    @apply bg-blue-50 text-bayan-teal;
   }
 
   .news-scope-pill.barangay {
@@ -2603,7 +2729,7 @@
   }
 
   .notification-card-icon.info {
-    @apply bg-blue-50 text-bayan-blue;
+    @apply bg-blue-50 text-bayan-teal;
   }
 
   .notification-card-icon.warning {

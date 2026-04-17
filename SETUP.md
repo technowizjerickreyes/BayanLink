@@ -52,28 +52,33 @@ cd ../client && npm install
 
 ### 2. Configure Environment Variables
 
+PowerShell quick start from the repository root:
+
+```powershell
+npm run setup:windows
+```
+
+That command creates `server/.env` and `client/.env`, applies local development defaults, and runs the seed scripts from the right working directory.
+
 **Server (.env):**
-```bash
-cd server
-cp .env.example .env
+```powershell
+Copy-Item server/.env.example server/.env
 
 # Edit .env with:
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/bayanlink
-PORT=3000
+MONGO_URI=mongodb://localhost:27017/bayanlink
+PORT=5000
 NODE_ENV=development
-JWT_SECRET=your_jwt_secret_key
-ACCESS_TOKEN_TTL=15m
-REFRESH_TOKEN_TTL=7d
-CORS_ORIGIN=http://localhost:5173
+JWT_ACCESS_SECRET=your_access_secret_here
+JWT_REFRESH_SECRET=your_refresh_secret_here
+CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 ```
 
 **Client (.env):**
-```bash
-cd ../client
-cp .env.example .env
+```powershell
+Copy-Item client/.env.example client/.env
 
 # Edit .env with:
-VITE_API_URL=http://localhost:3000
+VITE_API_BASE_URL=http://localhost:5000/api
 ```
 
 ### 3. Initialize Database
@@ -91,7 +96,7 @@ MongoDB stores user accounts, sessions, and dynamic content.
 npm run dev
 
 # This runs concurrently:
-# - Server on http://localhost:3000
+# - Server on http://localhost:5000
 # - Client on http://localhost:5173
 ```
 
@@ -187,12 +192,12 @@ lsof -i :5173
 ```
 
 ### MongoDB Connection Error
-- Check `MONGODB_URI` in `.env`
+- Check `MONGO_URI` in `.env`
 - Ensure your IP is whitelisted in MongoDB Atlas
 - Verify credentials are correct
 
 ### CORS Error
-- Ensure `CORS_ORIGIN` matches frontend URL
+- Ensure `CORS_ORIGINS` matches frontend URL
 - Default: `http://localhost:5173`
 
 ### Dependencies Not Found

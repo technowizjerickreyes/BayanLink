@@ -14,9 +14,9 @@ const userSchema = new mongoose.Schema(
       trim: true,
       maxlength: 254,
     },
-    passwordHash: {
+    password: {
       type: String,
-      required: [true, "Password hash is required"],
+      required: [true, "Password is required"],
       select: false,
     },
     fullName: {
@@ -83,6 +83,12 @@ const userSchema = new mongoose.Schema(
 
 userSchema.index({ role: 1, municipalityId: 1, barangayId: 1, status: 1 });
 
+userSchema.pre("save", async function hashPassword(next) {
+  if (!this.isModified("password")) return next();
+  this.password = await bcrypt.hash(this.password, PASSWORD_HASH_ROUNDS);
+  next();
+});
+
 userSchema.pre("validate", function requireScopedRole() {
   if (this.role !== "super_admin" && !this.municipalityId) {
     this.invalidate("municipalityId", "Municipality is required for this role");
@@ -94,7 +100,7 @@ userSchema.pre("validate", function requireScopedRole() {
 });
 
 userSchema.methods.comparePassword = function comparePassword(candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.passwordHash);
+  return bcrypt.compare(candidatePassword, this.password);
 };
 
 userSchema.statics.hashPassword = function hashPassword(password) {
@@ -103,7 +109,7 @@ userSchema.statics.hashPassword = function hashPassword(password) {
 
 userSchema.set("toJSON", {
   transform(_doc, ret) {
-    delete ret.passwordHash;
+    delete ret.password;
     delete ret.failedLoginCount;
     delete ret.lockUntil;
     delete ret.__v;

@@ -35,7 +35,7 @@ export default function HomePage() {
 
   const displayStats = stats || {
     population: 72134,
-    barangays: 14,
+    barangays: 26,
     servicesAvailable: 50,
     activeUsers: 8500,
   };
@@ -69,20 +69,62 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <HeroSection
-        title="Welcome to Aliaga Municipal Portal"
-        subtitle="Your gateway to seamless access to municipal services. Submit requests, book appointments, and track your documents online."
-      >
-        <div className="flex flex-wrap gap-3">
-          <Link to="/citizen/login" className="button primary">
-            Get Started
-          </Link>
-          <Link to="/about" className="button ghost">
-            Learn More
-          </Link>
+      {/* Full-Screen Hero Section */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Background Image with Overlay - Aliaga Municipal Hall */}
+        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
+             style={{backgroundImage: "url('/aliaga-hall.jpg')"}}>
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/85 via-blue-800/75 to-green-700/65"></div>
         </div>
-      </HeroSection>
+        
+        {/* Content */}
+        <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
+          {/* Logo */}
+          <div className="mb-8">
+            <img src="/logo.png" className="w-24 mx-auto mb-4" alt="Aliaga Municipal Logo" />
+          </div>
+          
+          {/* Title and Subtitle */}
+          <h1 className="text-4xl md:text-6xl font-black mb-6 leading-tight">
+            BayanLink Aliaga
+          </h1>
+          <p className="text-xl md:text-2xl mb-12 text-blue-100 max-w-3xl mx-auto leading-relaxed">
+            Municipal Citizen Engagement System
+          </p>
+          
+          {/* Portal Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/citizen/login" className="btn-primary">
+              Citizen Portal
+            </a>
+
+            <a href="/barangay/login" className="btn-secondary">
+              Barangay Portal
+            </a>
+
+            <a href="/super-admin/login" className="btn-accent">
+              Admin Portal
+            </a>
+          </div>
+          
+          {/* Quick Links */}
+          <div className="mt-12 flex flex-wrap justify-center gap-4">
+            <Link to="/about" className="text-white/80 hover:text-white transition-colors underline-offset-4">
+              About Aliaga →
+            </Link>
+            <Link to="/contact" className="text-white/80 hover:text-white transition-colors underline-offset-4">
+              Contact Us →
+            </Link>
+          </div>
+        </div>
+        
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white/60 animate-bounce">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+          </svg>
+        </div>
+      </section>
 
       {/* Quick Stats */}
       <section className="border-b border-bayan-border bg-white">
@@ -248,7 +290,7 @@ export default function HomePage() {
                 Municipality of Aliaga, Nueva Ecija
               </h2>
               <p className="mt-4 text-lg text-bayan-muted leading-relaxed">
-                Aliaga is a progressive municipality in Nueva Ecija, Philippines, with a population of 72,134 residents spread across 14 barangays. Our community is committed to delivering high-quality municipal services and fostering sustainable development.
+                Aliaga is a progressive municipality in Nueva Ecija, Philippines, with a population of 72,134 residents spread across 26 barangays. Our community is committed to delivering high-quality municipal services and fostering sustainable development.
               </p>
               <div className="mt-6 grid gap-3">
                 <div className="flex gap-3">

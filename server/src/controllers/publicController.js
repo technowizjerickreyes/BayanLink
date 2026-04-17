@@ -49,7 +49,7 @@ export const getPublicNews = asyncHandler(async (req, res) => {
 export const getMunicipalityStats = asyncHandler(async (_req, res) => {
   const stats = {
     population: 72134,
-    barangays: 14,
+    barangays: 26,
     servicesAvailable: 50,
     activeUsers: 8500,
   };

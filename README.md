@@ -140,14 +140,22 @@ Install all dependencies from the repository root:
 npm run install:all
 ```
 
-Create server environment config:
+PowerShell quick start from the repository root:
 
-```bash
-cd server
-copy .env.example .env
+```powershell
+npm run setup:windows
 ```
 
-Set strong secrets and MongoDB connection values:
+`npm run setup:windows` creates `server/.env` and `client/.env` from their example files, fills local development defaults, and runs the seed commands from the correct directory.
+
+Manual setup is also fine. Create the env files first:
+
+```powershell
+Copy-Item server/.env.example server/.env
+Copy-Item client/.env.example client/.env
+```
+
+Then edit `server/.env` with your MongoDB connection and secrets:
 
 ```env
 PORT=5000
@@ -157,23 +165,32 @@ JWT_REFRESH_SECRET=replace_with_a_long_random_refresh_secret
 CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 ```
 
-Optional client config:
+The client default is already correct for local development:
 
-```bash
-cd client
-copy .env.example .env
+```env
+VITE_API_BASE_URL=http://localhost:5000/api
 ```
+
+PowerShell note: do not paste `PORT=5000` style lines directly into the terminal. Put them in `.env`, or use `$env:PORT = "5000"` if you need a temporary session override.
 
 ## Seed Data
 
-Run these after `MONGO_URI` and the seed Super Admin env values are set:
+Run these from the repository root after `MONGO_URI` and the seed Super Admin env values are set:
 
 ```bash
-npm run seed:roles --prefix server
-npm run seed:super-admin --prefix server
-npm run seed:municipalities --prefix server
-npm run seed:portal-users --prefix server
+npm run seed:all
 ```
+
+Or run them one at a time:
+
+```bash
+npm run seed:roles
+npm run seed:super-admin
+npm run seed:municipalities
+npm run seed:portal-users
+```
+
+If you are already inside `server`, drop the `--prefix server` part and run the server package scripts directly.
 
 The Super Admin seed uses:
 

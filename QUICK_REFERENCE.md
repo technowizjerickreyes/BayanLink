@@ -6,23 +6,15 @@
 # 1. Install everything
 npm run install:all
 
-# 2. Setup server environment
-cd server
-cp .env.example .env
-# Edit .env with your MongoDB URI and JWT secret
-cd ..
+# 2. Windows PowerShell setup
+npm run setup:windows
 
-# 3. Setup client environment
-cd client
-cp .env.example .env
-cd ..
-
-# 4. Start development
+# 3. Start development
 npm run dev
 
 # Result:
 # Frontend: http://localhost:5173
-# Backend: http://localhost:3000
+# Backend: http://localhost:5000
 ```
 
 ## Key URLs When Running
@@ -33,24 +25,25 @@ npm run dev
 | Signup | http://localhost:5173/signup |
 | Login | http://localhost:5173/login |
 | Citizen Dashboard | http://localhost:5173/citizen/dashboard |
-| API Health | http://localhost:3000/api/health |
-| Public Municipalities | http://localhost:3000/api/public/municipality/info |
-| Public Barangays | http://localhost:3000/api/public/barangays |
+| API Health | http://localhost:5000/api/health |
+| Public Municipalities | http://localhost:5000/api/public/municipality/info |
+| Public Barangays | http://localhost:5000/api/public/barangays |
 
 ## Essential Environment Variables
 
 **server/.env**
 ```
-MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/bayanlink
-PORT=3000
+MONGO_URI=mongodb://localhost:27017/bayanlink
+PORT=5000
 NODE_ENV=development
-JWT_SECRET=your_secret_key_here_min_32_chars
-CORS_ORIGIN=http://localhost:5173
+JWT_ACCESS_SECRET=your_access_secret_here_min_32_chars
+JWT_REFRESH_SECRET=your_refresh_secret_here_min_32_chars
+CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 ```
 
 **client/.env**
 ```
-VITE_API_URL=http://localhost:3000
+VITE_API_BASE_URL=http://localhost:5000/api
 ```
 
 ## Database Connection
@@ -59,7 +52,7 @@ VITE_API_URL=http://localhost:3000
 2. Create free account
 3. Create cluster
 4. Get connection string
-5. Add to server/.env as MONGODB_URI
+5. Add to server/.env as MONGO_URI
 
 ## Useful Commands
 
@@ -77,7 +70,7 @@ npm run client
 npm run build
 
 # Production server
-NODE_ENV=production npm start --prefix server
+$env:NODE_ENV="production"; npm start --prefix server
 ```
 
 ## New User Registration
@@ -143,10 +136,10 @@ These are loaded from files, not from database!
 | Problem | Solution |
 |---------|----------|
 | Port 3000 in use | `lsof -i :3000` then `kill -9 <PID>` |
-| Can't connect MongoDB | Check MONGODB_URI in .env |
-| Signup form blank | Check if server running, VITE_API_URL correct |
-| Login fails | Verify user exists in MongoDB, JWT_SECRET set |
-| CORS error | Check CORS_ORIGIN in server .env |
+| Can't connect MongoDB | Check MONGO_URI in .env |
+| Signup form blank | Check if server is running and VITE_API_BASE_URL is correct |
+| Login fails | Verify user exists in MongoDB and both JWT secrets are set |
+| CORS error | Check CORS_ORIGINS in server .env |
 | npm install fails | Delete node_modules, run `npm run install:all` |
 
 ## File Structure (Main)
@@ -203,9 +196,9 @@ bayanlink/
 
 ## Security Checklist
 
-- [ ] JWT_SECRET is 32+ characters
-- [ ] MONGODB_URI is correct and secret
-- [ ] CORS_ORIGIN matches frontend domain
+- [ ] JWT_ACCESS_SECRET and JWT_REFRESH_SECRET are 32+ characters
+- [ ] MONGO_URI is correct and secret
+- [ ] CORS_ORIGINS matches frontend domain
 - [ ] Password hashing enabled (bcryptjs)
 - [ ] .env files are .gitignored
 - [ ] HTTPS enabled in production

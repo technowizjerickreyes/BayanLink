@@ -190,114 +190,171 @@ export default function LoginPage({ portalRole = "" }) {
   };
 
   return (
-    <main className="login-page">
-      <section className="login-shell">
-        <div className="login-stage">
-          <aside className="login-aside">
-            <div className="brand login-brand">
-              <span className="brand-mark">BL</span>
+    <main className="min-h-screen bg-gray-50">
+      <div className="min-h-screen flex flex-col lg:flex-row">
+        {/* Left Side - Image & Branding */}
+        <div className="lg:w-1/2 relative overflow-hidden">
+          {/* Background Image */}
+          <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
+               style={{backgroundImage: "url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"}}>
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-900/95 via-blue-800/90 to-green-700/80"></div>
+          </div>
+          
+          {/* Content */}
+          <div className="relative z-10 h-full flex flex-col justify-between p-8 lg:p-12 text-white">
+            {/* Logo */}
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center text-blue-900 font-bold text-xl shadow-lg">
+                A
+              </div>
               <div>
-                <strong>BayanLink</strong>
-                <small>Municipal citizen engagement platform</small>
+                <h1 className="text-2xl font-bold">BayanLink</h1>
+                <p className="text-blue-100 text-sm">Aliaga Municipal Portal</p>
               </div>
             </div>
-
-            <div className="login-copy">
-              <p className="eyebrow">{portal.eyebrow}</p>
-              <h1>{portal.title}</h1>
-              <p className="login-subtitle">{portal.subtitle}</p>
-            </div>
-
-            <div className="login-role-card">
-              <span className="login-portal-badge">{portal.accessLabel}</span>
-              <p>{portal.accessNote}</p>
-            </div>
-
-            <div className="login-highlight-list" aria-label="Platform highlights">
-              {portal.highlights.map((item) => (
-                <article className="login-highlight" key={item.title}>
-                  <span className="login-highlight-icon">
-                    <Icon name={item.icon} size={18} />
-                  </span>
-                  <div>
-                    <strong>{item.title}</strong>
-                    <p>{item.description}</p>
+            
+            {/* Main Content */}
+            <div className="flex-1 flex flex-col justify-center max-w-md">
+              <p className="text-amber-400 font-semibold text-sm uppercase tracking-wide mb-4">
+                {portal.eyebrow}
+              </p>
+              <h2 className="text-4xl lg:text-5xl font-black mb-6 leading-tight">
+                {portal.title}
+              </h2>
+              <p className="text-lg text-blue-100 mb-8 leading-relaxed">
+                {portal.subtitle}
+              </p>
+              
+              {/* Features */}
+              <div className="space-y-4">
+                {portal.highlights.map((item) => (
+                  <div key={item.title} className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
+                      <Icon name={item.icon} size={16} className="text-amber-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-white mb-1">{item.title}</h3>
+                      <p className="text-blue-100 text-sm">{item.description}</p>
+                    </div>
                   </div>
-                </article>
-              ))}
+                ))}
+              </div>
             </div>
-          </aside>
+            
+            {/* Bottom Info */}
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="bg-amber-500 text-blue-900 text-xs font-bold px-2 py-1 rounded-full">
+                  {portal.accessLabel}
+                </span>
+              </div>
+              <p className="text-sm text-blue-100">{portal.accessNote}</p>
+            </div>
+          </div>
+        </div>
 
-          <section className="login-panel">
-            <div className="login-panel-head">
-              <p className="eyebrow">Sign in</p>
-              <h2>{portal.signInTitle}</h2>
-              <p>{portal.signInDescription}</p>
+          {/* Right Side - Login Form */}
+        <div className="lg:w-1/2 bg-white flex items-center justify-center p-8 lg:p-12">
+          <div className="w-full max-w-md p-8 shadow-xl rounded-2xl">
+            {/* Logo */}
+            <img src="/logo.png" className="w-16 mx-auto mb-6" alt="Aliaga Municipal Logo" />
+
+            {/* Form Header */}
+            <div className="mb-8">
+              <p className="text-blue-600 font-semibold text-sm uppercase tracking-wide mb-2">
+                Secure Access
+              </p>
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                {portal.signInTitle}
+              </h2>
+              <p className="text-gray-600">
+                {portal.signInDescription}
+              </p>
             </div>
 
-            {error && <StatusMessage type="error">{error}</StatusMessage>}
+            {/* Error/Helper Messages */}
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-center gap-2 text-red-800">
+                  <Icon name="alert" size={16} />
+                  <span className="text-sm font-medium">{error}</span>
+                </div>
+              </div>
+            )}
+            
             {helperMessage && (
-              <div className="login-helper-note" role="status">
-                <Icon name="lock" size={16} />
-                <span>{helperMessage}</span>
+              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-center gap-2 text-blue-800">
+                  <Icon name="lock" size={16} />
+                  <span className="text-sm">{helperMessage}</span>
+                </div>
               </div>
             )}
 
-            <form aria-busy={submitting} className="form-panel login-form" onSubmit={handleSubmit}>
-              <FormInput
-                autoComplete="email"
-                autoFocus
-                disabled={submitting}
-                hint="Use the email registered for your BayanLink account."
-                label="Email address"
-                name="email"
-                onChange={handleChange}
-                required
-                type="email"
-                value={form.email}
-              />
+            {/* Login Form */}
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Email Field */}
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={form.email}
+                  onChange={handleChange}
+                  disabled={submitting}
+                  className="input"
+                  placeholder="your@email.com"
+                />
+              </div>
 
-              <div className="field">
-                <label className="form-label mb-0" htmlFor="login-password">
+              {/* Password Field */}
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                   Password
                 </label>
-                <div className="field-input-group">
+                <div className="relative">
                   <input
-                    autoComplete="current-password"
-                    className="form-control"
-                    disabled={submitting}
-                    id="login-password"
+                    id="password"
                     name="password"
-                    onChange={handleChange}
-                    required
                     type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    required
                     value={form.password}
+                    onChange={handleChange}
+                    disabled={submitting}
+                    className="input pr-12"
+                    placeholder="Enter your password"
                   />
                   <button
-                    aria-controls="login-password"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                    aria-pressed={showPassword}
-                    className="field-inline-action"
-                    onClick={() => setShowPassword((current) => !current)}
                     type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    disabled={submitting}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:opacity-50"
                   >
-                    <Icon name={showPassword ? "hide" : "view"} size={16} />
-                    <span>{showPassword ? "Hide" : "Show"}</span>
+                    <Icon name={showPassword ? "hide" : "view"} size={20} />
                   </button>
                 </div>
               </div>
 
-              <div className="login-form-row">
-                <FormInput
-                  checked={rememberMe}
-                  disabled={submitting}
-                  label="Remember email on this device"
-                  name="rememberMe"
-                  onChange={(event) => setRememberMe(event.target.checked)}
-                  type="checkbox"
-                />
+              {/* Remember & Forgot */}
+              <div className="flex items-center justify-between">
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    disabled={submitting}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:opacity-50"
+                  />
+                  <span className="ml-2 text-sm text-gray-600">Remember email</span>
+                </label>
                 <button
-                  className="login-link-button"
+                  type="button"
                   onClick={() =>
                     setHelperMessage(
                       portalRole === "citizen"
@@ -305,40 +362,50 @@ export default function LoginPage({ portalRole = "" }) {
                         : "Password recovery is not yet connected in this portal. Please coordinate with your authorized system administrator."
                     )
                   }
-                  type="button"
+                  className="text-sm text-blue-600 hover:text-blue-800 font-medium"
                 >
                   Forgot password?
                 </button>
               </div>
 
-              <button className="button primary btn btn-success login-submit" disabled={submitting} type="submit">
-                {submitting ? <span className="loading-dot" /> : <Icon name="check" />}
-                <span>{submitting ? "Signing in securely..." : "Sign in"}</span>
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={submitting}
+                className="btn-primary w-full"
+              >
+                {submitting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Signing in...</span>
+                  </>
+                ) : (
+                  <>
+                    <Icon name="check" size={16} />
+                    <span>Sign In</span>
+                  </>
+                )}
               </button>
             </form>
 
-            <div className="login-footnote">
-              <strong>Need access support?</strong>
-              <p>{portal.supportNote}</p>
+            {/* Support Info */}
+            <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+              <h3 className="font-semibold text-gray-900 mb-1">Need Access Support?</h3>
+              <p className="text-sm text-gray-600">{portal.supportNote}</p>
             </div>
 
-            <div className="text-center" style={{ marginTop: "16px", color: "var(--color-bayan-muted)" }}>
-              <p style={{ marginBottom: "8px" }}>Don't have an account yet?</p>
-              <Link
-                to="/signup"
-                style={{
-                  color: "var(--color-bayan-teal)",
-                  textDecoration: "none",
-                  fontWeight: 600,
-                  fontSize: "14px",
-                }}
-              >
-                Create an account here
-              </Link>
+            {/* Sign Up Link */}
+            <div className="mt-6 text-center">
+              <p className="text-sm text-gray-600">
+                Don't have an account?{" "}
+                <Link to="/signup" className="text-blue-600 hover:text-blue-800 font-medium">
+                  Create Account
+                </Link>
+              </p>
             </div>
-          </section>
+          </div>
         </div>
-      </section>
+      </div>
     </main>
   );
 }

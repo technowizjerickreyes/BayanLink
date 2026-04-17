@@ -9,6 +9,12 @@
     "client": "npm run dev --prefix client",
     "build": "npm run build --prefix client",
     "check": "npm run check --prefix server",
+    "seed:roles": "npm run seed:roles --prefix server",
+    "seed:super-admin": "npm run seed:super-admin --prefix server",
+    "seed:municipalities": "npm run seed:municipalities --prefix server",
+    "seed:portal-users": "npm run seed:portal-users --prefix server",
+    "seed:all": "npm run seed:roles && npm run seed:super-admin && npm run seed:municipalities && npm run seed:portal-users",
+    "setup:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File ./setup-env.ps1",
     "install:all": "npm install && npm install --prefix client && npm install --prefix server"
   },
   "devDependencies": {

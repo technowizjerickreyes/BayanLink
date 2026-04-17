@@ -86,13 +86,10 @@ bayanlink/
 # 1. Install dependencies
 npm run install:all
 
-# 2. Set up environment files
-cd server && cp .env.example .env
-cd ../client && cp .env.example .env
+# 2. Windows PowerShell setup
+npm run setup:windows
 
-# 3. Update .env files with your MongoDB URI and other config
-
-# 4. Run development
+# 3. Run development
 npm run dev
 ```
 

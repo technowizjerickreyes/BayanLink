@@ -5,6 +5,7 @@ const email = process.env.SEED_SUPER_ADMIN_EMAIL;
 const password = process.env.SEED_SUPER_ADMIN_PASSWORD;
 const firstName = process.env.SEED_SUPER_ADMIN_FIRST_NAME || "BayanLink";
 const lastName = process.env.SEED_SUPER_ADMIN_LAST_NAME || "Super Admin";
+const fullName = `${firstName} ${lastName}`;
 
 if (!email || !password) {
   console.error("SEED_SUPER_ADMIN_EMAIL and SEED_SUPER_ADMIN_PASSWORD are required.");
@@ -22,9 +23,8 @@ if (existing) {
 
 const user = await User.create({
   email,
-  passwordHash: await User.hashPassword(password),
-  firstName,
-  lastName,
+  password: password, // User model middleware will hash this automatically
+  fullName: "BayanLink Super Admin",
   role: "super_admin",
   status: "active",
   municipalityId: null,
