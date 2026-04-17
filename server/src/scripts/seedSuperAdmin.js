@@ -3,8 +3,7 @@ import User from "../models/User.js";
 
 const email = process.env.SEED_SUPER_ADMIN_EMAIL;
 const password = process.env.SEED_SUPER_ADMIN_PASSWORD;
-const firstName = process.env.SEED_SUPER_ADMIN_FIRST_NAME || "BayanLink";
-const lastName = process.env.SEED_SUPER_ADMIN_LAST_NAME || "Super Admin";
+const fullName = process.env.SEED_SUPER_ADMIN_FULL_NAME || "BayanLink Super Admin";
 
 if (!email || !password) {
   console.error("SEED_SUPER_ADMIN_EMAIL and SEED_SUPER_ADMIN_PASSWORD are required.");
@@ -22,9 +21,8 @@ if (existing) {
 
 const user = await User.create({
   email,
-  passwordHash: await User.hashPassword(password),
-  firstName,
-  lastName,
+  password,
+  fullName,
   role: "super_admin",
   status: "active",
   municipalityId: null,

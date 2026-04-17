@@ -9,7 +9,7 @@ const LOCK_MINUTES = 15;
 
 function serializeUser(user) {
   const source = typeof user.toJSON === "function" ? user.toJSON() : { ...user };
-  delete source.passwordHash;
+  delete source.password;
   delete source.failedLoginCount;
   delete source.lockUntil;
   return source;
@@ -74,7 +74,7 @@ export async function registerCitizen(payload) {
   const passwordHash = await User.hashPassword(payload.password);
   const user = await User.create({
     email: payload.email,
-    passwordHash,
+    password: passwordHash,
     fullName: payload.fullName,
     phone: payload.phone || "",
     affiliate: payload.affiliate || "",
@@ -88,7 +88,7 @@ export async function registerCitizen(payload) {
 }
 
 export async function loginWithPassword(req, { email, password }) {
-  const user = await User.findOne({ email }).select("+passwordHash +failedLoginCount +lockUntil");
+  const user = await User.findOne({ email }).select("+password +failedLoginCount +lockUntil");
 
   if (!user) {
     throw new ApiError(401, "Invalid credentials");

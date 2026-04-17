@@ -12,7 +12,8 @@
     "seed:super-admin": "node src/scripts/seedSuperAdmin.js",
     "seed:municipalities": "node src/scripts/seedMunicipalities.js",
     "seed:portal-users": "node src/scripts/seedPortalUsers.js",
-    "seed:phase1": "node src/scripts/seedPhase1Services.js"
+    "seed:phase1": "node src/scripts/seedPhase1Services.js",
+    "seed:all": "npm run seed:roles && npm run seed:municipalities && npm run seed:super-admin && npm run seed:portal-users"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

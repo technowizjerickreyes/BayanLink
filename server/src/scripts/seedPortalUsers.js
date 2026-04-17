@@ -19,24 +19,21 @@ if (!municipality) {
 const users = [
   {
     email: process.env.SEED_MUNICIPAL_ADMIN_EMAIL || "municipal.admin@bayanlink.local",
-    firstName: "Municipal",
-    lastName: "Admin",
+    fullName: "Municipal Admin",
     role: "municipal_admin",
     municipalityId: municipality._id,
     barangayId: "",
   },
   {
     email: process.env.SEED_BARANGAY_ADMIN_EMAIL || "barangay.admin@bayanlink.local",
-    firstName: "Barangay",
-    lastName: "Admin",
+    fullName: "Barangay Admin",
     role: "barangay_admin",
     municipalityId: municipality._id,
     barangayId: defaultBarangayId,
   },
   {
     email: process.env.SEED_CITIZEN_EMAIL || "citizen@bayanlink.local",
-    firstName: "Juan",
-    lastName: "Citizen",
+    fullName: "Juan Citizen",
     role: "citizen",
     municipalityId: municipality._id,
     barangayId: defaultBarangayId,
@@ -44,14 +41,12 @@ const users = [
 ];
 
 for (const user of users) {
-  const passwordHash = await User.hashPassword(defaultPassword);
-
   await User.findOneAndUpdate(
     { email: user.email },
     {
       $set: {
         ...user,
-        passwordHash,
+        password: defaultPassword,
         phone: "+63 900 000 0000",
         status: "active",
         failedLoginCount: 0,
