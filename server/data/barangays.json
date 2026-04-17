@@ -1,0 +1,16 @@
+[
+  { "code": "SAN_RAFAEL", "name": "San Rafael" },
+  { "code": "SAN_JUAN", "name": "San Juan" },
+  { "code": "SAN_ROQUE", "name": "San Roque" },
+  { "code": "SAN_JOSE", "name": "San Jose" },
+  { "code": "SAN_ISIDRO", "name": "San Isidro" },
+  { "code": "PARI_PARI", "name": "Pari Pari" },
+  { "code": "QUIOT", "name": "Quiot" },
+  { "code": "SAMPALOC", "name": "Sampaloc" },
+  { "code": "CABANGGAN", "name": "Cabanggan" },
+  { "code": "LAGUNDI", "name": "Lagundi" },
+  { "code": "MAPAGONG", "name": "Mapagong" },
+  { "code": "MALUMPOT", "name": "Malumpot" },
+  { "code": "SIBACAO", "name": "Sibacao" },
+  { "code": "SUCONG", "name": "Sucong" }
+]

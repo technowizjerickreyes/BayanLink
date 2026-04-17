@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes, useParams } from "react-router-
 import DashboardLayout from "../components/layout/DashboardLayout.jsx";
 import PublicLayout from "../components/layout/PublicLayout.jsx";
 import LoginPage from "../pages/auth/LoginPage.jsx";
+import SignupPage from "../pages/auth/SignupPage.jsx";
 import HomePage from "../pages/public/HomePage.jsx";
 import AboutPage from "../pages/public/AboutPage.jsx";
 import ServicesPage from "../pages/public/ServicesPage.jsx";
@@ -58,6 +59,7 @@ export default function AppRoutes() {
 
         {/* Auth Routes */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
         <Route path="/citizen/login" element={<LoginPage portalRole="citizen" />} />
         <Route path="/municipal/login" element={<LoginPage portalRole="municipal_admin" />} />
         <Route path="/municipal-admin/login" element={<LoginPage portalRole="municipal_admin" />} />

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import FormInput from "../../components/common/FormInput.jsx";
 import Icon from "../../components/common/Icon.jsx";
 import StatusMessage from "../../components/common/StatusMessage.jsx";
@@ -320,6 +320,21 @@ export default function LoginPage({ portalRole = "" }) {
             <div className="login-footnote">
               <strong>Need access support?</strong>
               <p>{portal.supportNote}</p>
+            </div>
+
+            <div className="text-center" style={{ marginTop: "16px", color: "var(--color-bayan-muted)" }}>
+              <p style={{ marginBottom: "8px" }}>Don't have an account yet?</p>
+              <Link
+                to="/signup"
+                style={{
+                  color: "var(--color-bayan-teal)",
+                  textDecoration: "none",
+                  fontWeight: 600,
+                  fontSize: "14px",
+                }}
+              >
+                Create an account here
+              </Link>
             </div>
           </section>
         </div>

@@ -2,6 +2,24 @@ import asyncHandler from "../utils/asyncHandler.js";
 import { getPagination } from "../utils/pagination.js";
 import { sendSuccess } from "../utils/apiResponse.js";
 import { listVisibleNews } from "../services/newsFeedService.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const dataDir = path.join(__dirname, "../../data");
+
+// Load JSON data files
+function loadJsonFile(filename) {
+  try {
+    const filePath = path.join(dataDir, filename);
+    const data = fs.readFileSync(filePath, "utf-8");
+    return JSON.parse(data);
+  } catch (error) {
+    console.error(`Error loading ${filename}:`, error);
+    return [];
+  }
+}
 
 /**
  * GET /api/public/news
@@ -44,34 +62,27 @@ export const getMunicipalityStats = asyncHandler(async (_req, res) => {
 
 /**
  * GET /api/public/municipality/info
- * Get public municipality information
+ * Get list of municipalities from JSON data
  */
-export const getMunicipalityInfo = asyncHandler(async (_req, res) => {
-  const info = {
-    name: "Municipality of Aliaga",
-    province: "Nueva Ecija",
-    region: "CALABARZON",
-    population: 72134,
-    landArea: "68 square kilometers",
-    barangays: 14,
-    description: "A progressive municipality committed to delivering high-quality services and fostering sustainable development.",
-    motto: "Progress, Justice, and Community Empowerment",
-    contactEmail: "info@aliaga.gov.ph",
-    contactPhone: "+63 (0) 44-294-1234",
-    operatingHours: {
-      monday: "8:00 AM - 5:00 PM",
-      tuesday: "8:00 AM - 5:00 PM",
-      wednesday: "8:00 AM - 5:00 PM",
-      thursday: "8:00 AM - 5:00 PM",
-      friday: "8:00 AM - 5:00 PM",
-      saturday: "Closed",
-      sunday: "Closed",
-    },
-  };
+export const getMunicipalityList = asyncHandler(async (_req, res) => {
+  const municipalities = loadJsonFile("municipalities.json");
 
   return sendSuccess(res, {
-    message: "Municipality information loaded",
-    data: info,
+    message: "Municipalities loaded",
+    data: municipalities,
+  });
+});
+
+/**
+ * GET /api/public/barangays
+ * Get list of barangays from JSON data
+ */
+export const getBarangaysList = asyncHandler(async (_req, res) => {
+  const barangays = loadJsonFile("barangays.json");
+
+  return sendSuccess(res, {
+    message: "Barangays loaded",
+    data: barangays,
   });
 });
 

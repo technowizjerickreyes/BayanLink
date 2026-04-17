@@ -31,14 +31,24 @@ export default function PublicNavbar() {
 
         {/* Login Buttons */}
         <div className="flex items-center gap-2">
-          <Link to="/citizen/login" className="button ghost hidden text-sm sm:inline-flex">
-            Login
+          <Link to="/signup" className="button ghost hidden text-sm sm:inline-flex">
+            Sign Up
+          </Link>
+          <Link to="/login" className="button primary text-sm hidden sm:inline-flex">
+            Sign In
           </Link>
           <div className="relative group">
-            <button className="button primary text-sm">
-              Portals
+            <button className="button primary text-sm sm:hidden">
+              Menu
             </button>
             <div className="absolute right-0 top-full hidden min-w-[200px] flex-col gap-2 border border-bayan-border bg-white p-3 shadow-card group-hover:flex">
+              <Link to="/signup" className="rounded px-3 py-2 text-sm hover:bg-bayan-surface font-bold">
+                Create Account
+              </Link>
+              <Link to="/login" className="rounded px-3 py-2 text-sm hover:bg-bayan-surface">
+                Sign In
+              </Link>
+              <hr className="my-2 border-bayan-border" />
               <Link to="/citizen/login" className="rounded px-3 py-2 text-sm hover:bg-bayan-surface">
                 Citizen Portal
               </Link>

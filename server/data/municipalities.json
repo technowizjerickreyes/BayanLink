@@ -1,0 +1,15 @@
+[
+  {
+    "_id": "aliaga_001",
+    "code": "ALIAGA",
+    "name": "Aliaga",
+    "province": "Nueva Ecija",
+    "region": "CALABARZON",
+    "officialEmail": "aliaga@neuejaecija.gov.ph",
+    "officialContactNumber": "+63-44-123-4567",
+    "officeAddress": "Municipal Hall, Aliaga, Nueva Ecija 3136 Philippines",
+    "population": 72134,
+    "barangayCount": 14,
+    "status": "active"
+  }
+]

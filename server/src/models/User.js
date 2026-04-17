@@ -19,22 +19,22 @@ const userSchema = new mongoose.Schema(
       required: [true, "Password hash is required"],
       select: false,
     },
-    firstName: {
+    fullName: {
       type: String,
-      required: [true, "First name is required"],
+      required: [true, "Full name is required"],
       trim: true,
-      maxlength: 80,
-    },
-    lastName: {
-      type: String,
-      required: [true, "Last name is required"],
-      trim: true,
-      maxlength: 80,
+      maxlength: 160,
     },
     phone: {
       type: String,
       trim: true,
       maxlength: 32,
+      default: "",
+    },
+    affiliate: {
+      type: String,
+      trim: true,
+      maxlength: 140,
       default: "",
     },
     role: {
