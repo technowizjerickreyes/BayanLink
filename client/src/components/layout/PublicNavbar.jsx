@@ -3,13 +3,17 @@ import { Link } from "react-router-dom";
 export default function PublicNavbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-bayan-border bg-white/95 backdrop-blur-sm">
-      <nav className="mx-auto flex max-w-[1120px] items-center justify-between gap-4 px-4 py-4">
-        {/* Logo & Brand */}
+      <nav className="mx-auto flex max-w-[1120px] items-center justify-between gap-4 px-4 py-3">
+        {/* Logo & Brand - with Municipality Seal */}
         <Link to="/" className="flex items-center gap-3">
-          <div className="brand-mark">B</div>
+          <img 
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Aliaga_Nueva_Ecija-dieHQ6M42us6abrNxyS40PP1QYjKUX.png"
+            alt="Municipality of Aliaga Official Seal"
+            className="h-12 w-12"
+          />
           <div className="hidden sm:block">
             <strong className="block text-sm">BayanLink</strong>
-            <small className="block text-xs">Aliaga Portal</small>
+            <small className="block text-xs text-bayan-muted">Aliaga Municipal Portal</small>
           </div>
         </Link>
 
