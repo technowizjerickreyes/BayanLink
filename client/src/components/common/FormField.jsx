@@ -1,9 +1,18 @@
-export default function FormField({ label, type = "text", options = [], error, hint, ...props }) {
+export default function FormField({
+  label,
+  type = "text",
+  options = [],
+  error,
+  hint,
+  showToggle,
+  onToggleVisibility,
+  ...props
+}) {
   if (type === "textarea") {
     return (
       <label className="field">
-        <span className="form-label mb-0">{label}</span>
-        <textarea {...props} className="form-control" />
+        <span>{label}</span>
+        <textarea {...props} />
         {hint && <small className="field-hint">{hint}</small>}
         {error && <small className="field-error">{error}</small>}
       </label>
@@ -13,8 +22,8 @@ export default function FormField({ label, type = "text", options = [], error, h
   if (type === "select") {
     return (
       <label className="field">
-        <span className="form-label mb-0">{label}</span>
-        <select {...props} className="form-select">
+        <span>{label}</span>
+        <select {...props}>
           {options.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
@@ -29,17 +38,41 @@ export default function FormField({ label, type = "text", options = [], error, h
 
   if (type === "checkbox") {
     return (
-      <label className="checkbox-field form-check">
-        <input {...props} className="form-check-input" type="checkbox" />
-        <span className="form-check-label">{label}</span>
+      <label className="checkbox-field">
+        <input {...props} type="checkbox" />
+        <span>{label}</span>
       </label>
+    );
+  }
+
+  // Password / text / email etc. — support show/hide toggle
+  if (showToggle) {
+    return (
+      <div className="field">
+        <span>{label}</span>
+        <div className="field-input-group">
+          <input {...props} className="form-control" type={type} />
+          {onToggleVisibility && (
+            <button
+              className="field-inline-action"
+              onClick={onToggleVisibility}
+              tabIndex={-1}
+              type="button"
+            >
+              {type === "password" ? "Show" : "Hide"}
+            </button>
+          )}
+        </div>
+        {hint && <small className="field-hint">{hint}</small>}
+        {error && <small className="field-error">{error}</small>}
+      </div>
     );
   }
 
   return (
     <label className="field">
-      <span className="form-label mb-0">{label}</span>
-      <input {...props} className="form-control" type={type} />
+      <span>{label}</span>
+      <input {...props} type={type} />
       {hint && <small className="field-hint">{hint}</small>}
       {error && <small className="field-error">{error}</small>}
     </label>

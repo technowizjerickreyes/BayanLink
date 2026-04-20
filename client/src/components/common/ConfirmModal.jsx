@@ -16,17 +16,23 @@ export default function ConfirmModal({
   return (
     <div className="modal-backdrop" role="presentation">
       <section aria-modal="true" className={`modal ${wide ? "wide" : ""}`} role="dialog">
-        <button aria-label="Close" className="icon-button modal-close" onClick={onCancel} title="Close" type="button">
+        <button
+          aria-label="Close"
+          className="icon-button modal-close"
+          onClick={onCancel}
+          title="Close"
+          type="button"
+        >
           <Icon name="close" />
         </button>
         <h2>{title}</h2>
         <p>{message}</p>
         {children}
         <div className="modal-actions">
-          <button className="button ghost btn btn-light" onClick={onCancel} type="button">
+          <button className="button ghost" onClick={onCancel} type="button">
             Cancel
           </button>
-          <button className={`button ${confirmTone} btn ${confirmTone === "primary" ? "btn-success" : "btn-danger"}`} onClick={onConfirm} type="button">
+          <button className={`button ${confirmTone}`} onClick={onConfirm} type="button">
             {confirmLabel}
           </button>
         </div>

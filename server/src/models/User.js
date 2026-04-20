@@ -19,6 +19,18 @@ const userSchema = new mongoose.Schema(
       required: [true, "Password is required"],
       select: false,
     },
+    firstName: {
+      type: String,
+      trim: true,
+      maxlength: 80,
+      default: "",
+    },
+    lastName: {
+      type: String,
+      trim: true,
+      maxlength: 80,
+      default: "",
+    },
     fullName: {
       type: String,
       required: [true, "Full name is required"],
@@ -83,17 +95,30 @@ const userSchema = new mongoose.Schema(
 
 userSchema.index({ role: 1, municipalityId: 1, barangayId: 1, status: 1 });
 
-userSchema.pre("save", async function hashPassword(next) {
-  if (!this.isModified("password")) return next();
-  try {
-    this.password = await bcrypt.hash(this.password, PASSWORD_HASH_ROUNDS);
-    next();
-  } catch (error) {
-    next(error);
-  }
+userSchema.pre("save", async function hashPassword() {
+  if (!this.isModified("password")) return;
+  this.password = await bcrypt.hash(this.password, PASSWORD_HASH_ROUNDS);
 });
 
-userSchema.pre("validate", function requireScopedRole() {
+userSchema.pre("validate", function populateNameFields() {
+  if (this.fullName && !this.firstName && !this.lastName) {
+    const parts = this.fullName.trim().split(" ");
+    this.firstName = parts[0] || "";
+    this.lastName = parts.slice(1).join(" ") || "";
+  }
+
+  if (!this.affiliate && this.role) {
+    if (this.role === "super_admin") {
+      this.affiliate = "System Administration";
+    } else if (this.role === "municipal_admin" && this.municipalityId) {
+      this.affiliate = `Municipality of ${this.municipalityId.name || "Local Government"}`;
+    } else if (this.role === "barangay_admin" && this.barangayId) {
+      this.affiliate = `Barangay ${this.barangayId}`;
+    } else if (this.role === "citizen") {
+      this.affiliate = this.barangayId ? `Resident of Barangay ${this.barangayId}` : "Citizen";
+    }
+  }
+
   if (this.role !== "super_admin" && !this.municipalityId) {
     this.invalidate("municipalityId", "Municipality is required for this role");
   }

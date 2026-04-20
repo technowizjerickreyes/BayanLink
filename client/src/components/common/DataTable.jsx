@@ -2,12 +2,10 @@ import Icon from "./Icon.jsx";
 import EmptyState from "./EmptyState.jsx";
 
 function ActionButton({ label, icon, tone, onClick }) {
-  const bootstrapTone = tone === "danger" ? "btn-outline-danger" : "btn-outline-secondary";
-
   return (
     <button
       aria-label={label}
-      className={`icon-button btn btn-sm ${bootstrapTone} ${tone || ""}`}
+      className={`icon-button ${tone === "danger" ? "danger" : ""}`}
       onClick={onClick}
       title={label}
       type="button"
@@ -33,9 +31,11 @@ export default function DataTable({
 
   return (
     <div className="table-shell">
-      <div className="table-toolbar">{toolbarContent || <span>{rows.length} records</span>}</div>
-      <table className="table table-hover align-middle mb-0">
-        <thead className="table-light">
+      <div className="table-toolbar">
+        {toolbarContent || <span>{rows.length} record{rows.length !== 1 ? "s" : ""}</span>}
+      </div>
+      <table>
+        <thead>
           <tr>
             {columns.map((column) => (
               <th key={column.key}>{column.label}</th>
@@ -52,17 +52,24 @@ export default function DataTable({
             </tr>
           ) : (
             rows.map((row) => (
-              <tr key={row._id}>
+              <tr key={row._id || row.id}>
                 {columns.map((column) => (
                   <td data-label={column.label} key={column.key}>
-                    {column.render ? column.render(row) : row[column.key]}
+                    {column.render ? column.render(row) : row[column.key] ?? "—"}
                   </td>
                 ))}
                 {hasActions && (
                   <td className="actions" data-label="Actions">
                     {onView && <ActionButton icon="view" label="View" onClick={() => onView(row)} />}
                     {onEdit && <ActionButton icon="edit" label="Edit" onClick={() => onEdit(row)} />}
-                    {onDelete && <ActionButton icon={deleteIcon} label={deleteLabel} onClick={() => onDelete(row)} tone="danger" />}
+                    {onDelete && (
+                      <ActionButton
+                        icon={deleteIcon}
+                        label={deleteLabel}
+                        onClick={() => onDelete(row)}
+                        tone="danger"
+                      />
+                    )}
                   </td>
                 )}
               </tr>

@@ -7,12 +7,14 @@ const paths = {
   calendar: "M7 3v3M17 3v3M4 8h16M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1Z",
   chat: "M4 5h16v10H8l-4 4V5Zm5 4h6M9 12h4",
   check: "M20 6 9 17l-5-5",
+  "check-circle": "M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z",
   close: "M6 6l12 12M18 6 6 18",
   dashboard: "M4 13h6V4H4v9Zm10 7h6V4h-6v16ZM4 20h6v-5H4v5Z",
   delete: "M4 7h16M10 11v6M14 11v6M6 7l1 14h10l1-14M9 7V4h6v3",
   edit: "M4 20h4l10-10a2.8 2.8 0 0 0-4-4L4 16v4Zm11-13 2 2",
   file: "M14 3H6a2 2 0 0 0-2 2v14h16V9l-6-6Zm0 0v6h6M8 13h8M8 17h5",
   hide: "m3 3 18 18M10.6 10.7a3 3 0 1 0 4.1 4.1M9.9 5.2A10.9 10.9 0 0 1 12 5c6 0 10 7 10 7a18.6 18.6 0 0 1-4 4.8M6.1 6.1C3.5 8.1 2 12 2 12s4 7 10 7a10.8 10.8 0 0 0 2.7-.3",
+  info: "M12 16v-4m0-4h.01M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18Z",
   lock: "M7 11V8a5 5 0 0 1 10 0v3M6 11h12v10H6V11Zm6 4v2",
   logout: "M10 17l5-5-5-5M15 12H3M21 4v16h-6",
   map: "M9 18 3 21V6l6-3 6 3 6-3v15l-6 3-6-3Zm0 0V3m6 18V6",
@@ -29,11 +31,33 @@ const paths = {
   wallet: "M4 7h15a1 1 0 0 1 1 1v11H4a2 2 0 0 1-2-2V5a2 2 0 0 0 2 2Zm12 6h4M4 7h13V5H4a2 2 0 0 0 0 4",
 };
 
-export default function Icon({ name, size = 18 }) {
+export default function Icon({ name, size = 18, className = "" }) {
+  const d = paths[name];
+
+  if (!d) {
+    // Fallback to a generic circle so rendering never crashes
+    return (
+      <svg
+        aria-hidden="true"
+        className={`icon ${className}`}
+        fill="none"
+        height={size}
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        viewBox="0 0 24 24"
+        width={size}
+      >
+        <circle cx="12" cy="12" r="9" />
+      </svg>
+    );
+  }
+
   return (
     <svg
       aria-hidden="true"
-      className="icon"
+      className={`icon ${className}`}
       fill="none"
       height={size}
       stroke="currentColor"
@@ -43,7 +67,7 @@ export default function Icon({ name, size = 18 }) {
       viewBox="0 0 24 24"
       width={size}
     >
-      <path d={paths[name]} />
+      <path d={d} />
     </svg>
   );
 }

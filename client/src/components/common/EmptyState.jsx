@@ -7,11 +7,11 @@ export default function EmptyState({ icon = "file", title, message, actionLabel,
         <Icon name={icon} size={20} />
       </span>
       <div>
-        <h2>{title}</h2>
-        <p>{message}</p>
+        {title && <h2>{title}</h2>}
+        {message && <p>{message}</p>}
       </div>
       {actionLabel && onAction && (
-        <button className="button primary btn btn-success" onClick={onAction} type="button">
+        <button className="button primary" onClick={onAction} type="button">
           {actionLabel}
         </button>
       )}

@@ -71,11 +71,12 @@ export async function registerCitizen(payload) {
     throw new ApiError(400, "Municipality is not available for registration");
   }
 
-  const password = await User.hashPassword(payload.password);
   const user = await User.create({
     email: payload.email,
-    password,
+    password: payload.password,
     fullName: payload.fullName,
+    firstName: payload.firstName || "",
+    lastName: payload.lastName || "",
     phone: payload.phone || "",
     affiliate: payload.affiliate || "",
     municipalityId: payload.municipalityId,
@@ -91,19 +92,24 @@ export async function loginWithPassword(req, { email, password }) {
   const user = await User.findOne({ email }).select("+password +failedLoginCount +lockUntil");
 
   if (!user) {
-    throw new ApiError(401, "Invalid credentials");
+    throw new ApiError(401, "Account not found");
   }
 
   if (user.lockUntil && user.lockUntil > new Date()) {
     await auditSuperAdminLogin(req, user, "failed_super_admin_login");
-    throw new ApiError(401, "Invalid credentials");
+    const lockMinutes = Math.ceil((new Date(user.lockUntil) - new Date()) / 60000);
+    throw new ApiError(401, `Account is locked. Try again in ${lockMinutes} minute(s)`);
+  }
+
+  if (user.status === "inactive") {
+    throw new ApiError(401, "Account is inactive. Contact support.");
   }
 
   const passwordMatches = await user.comparePassword(password);
 
-  if (!passwordMatches || user.status !== "active") {
+  if (!passwordMatches) {
     await registerFailedLogin(req, user);
-    throw new ApiError(401, "Invalid credentials");
+    throw new ApiError(401, "Incorrect password");
   }
 
   user.failedLoginCount = 0;

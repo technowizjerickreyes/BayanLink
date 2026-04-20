@@ -1,6 +1,6 @@
 import Icon from "./Icon.jsx";
 
-export default function PageHeader({ title, eyebrow, description, action, onAction, actionIcon = "add" }) {
+export default function PageHeader({ title, eyebrow, description, action, onAction, actionIcon = "add", actionTo }) {
   return (
     <header className="page-header">
       <div className="page-title-block">
@@ -9,10 +9,17 @@ export default function PageHeader({ title, eyebrow, description, action, onActi
         {description && <p>{description}</p>}
       </div>
       {action && (
-        <button className="button primary btn btn-success" onClick={onAction} type="button">
-          <Icon name={actionIcon} />
-          <span>{action}</span>
-        </button>
+        actionTo ? (
+          <a className="button primary" href={actionTo}>
+            <Icon name={actionIcon} />
+            <span>{action}</span>
+          </a>
+        ) : (
+          <button className="button primary" onClick={onAction} type="button">
+            <Icon name={actionIcon} />
+            <span>{action}</span>
+          </button>
+        )
       )}
     </header>
   );

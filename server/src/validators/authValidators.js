@@ -36,8 +36,8 @@ export const citizenRegisterValidators = [
 ];
 
 export const loginValidators = [
-  body("email").isEmail().withMessage("Invalid credentials").normalizeEmail(),
-  body("password").isString().isLength({ min: 1 }).withMessage("Invalid credentials"),
+  body("email").isEmail().withMessage("Please enter a valid email address").normalizeEmail(),
+  body("password").isString().isLength({ min: 1 }).withMessage("Password is required"),
 ];
 
 export const resetPasswordAllowedFields = [

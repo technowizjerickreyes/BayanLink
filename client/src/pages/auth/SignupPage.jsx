@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import FormInput from "../../components/common/FormInput.jsx";
 import Icon from "../../components/common/Icon.jsx";
 import StatusMessage from "../../components/common/StatusMessage.jsx";
 import { useAuth } from "../../auth/AuthContext.jsx";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+import { register } from "../../services/authService.js";
 
 export default function SignupPage() {
   const [form, setForm] = useState({
@@ -24,19 +22,24 @@ export default function SignupPage() {
   const [helperMessage, setHelperMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { isAuthenticated, loading, user } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
 
-  // Fetch municipalities on mount
+  // Use the same api base url resolution as api.js
+  const apiBase = (import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "http://localhost:5000/api")
+    .trim()
+    .replace(/\/$/, "");
+
   useEffect(() => {
     const fetchMunicipalities = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/public/municipality/info`);
+        const response = await fetch(`${apiBase}/public/municipality/info`);
         if (response.ok) {
           const data = await response.json();
-          setMunicipalities(data.data || []);
-          if (data.data?.length > 0) {
-            setForm((prev) => ({ ...prev, municipalityId: data.data[0]._id }));
+          const list = data.data || [];
+          setMunicipalities(list);
+          if (list.length > 0) {
+            setForm((prev) => ({ ...prev, municipalityId: list[0]._id }));
           }
         }
       } catch (err) {
@@ -44,20 +47,19 @@ export default function SignupPage() {
       }
     };
     fetchMunicipalities();
-  }, []);
+  }, [apiBase]);
 
-  // Fetch barangays when municipality changes
   useEffect(() => {
     if (!form.municipalityId) return;
-
     const fetchBarangays = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/public/barangays?municipalityId=${form.municipalityId}`);
+        const response = await fetch(`${apiBase}/public/barangays?municipalityId=${form.municipalityId}`);
         if (response.ok) {
           const data = await response.json();
-          setBarangays(data.data || []);
-          if (data.data?.length > 0) {
-            setForm((prev) => ({ ...prev, barangayId: data.data[0].code }));
+          const list = data.data || [];
+          setBarangays(list);
+          if (list.length > 0) {
+            setForm((prev) => ({ ...prev, barangayId: list[0].code }));
           }
         }
       } catch (err) {
@@ -65,7 +67,7 @@ export default function SignupPage() {
       }
     };
     fetchBarangays();
-  }, [form.municipalityId]);
+  }, [form.municipalityId, apiBase]);
 
   if (loading) {
     return (
@@ -87,33 +89,17 @@ export default function SignupPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Validation
-    if (!form.fullName.trim()) {
-      setError("Full name is required");
-      return;
-    }
-
-    if (form.password.length < 12) {
-      setError("Password must be at least 12 characters");
-      return;
-    }
-
-    if (form.password !== form.passwordConfirm) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    if (!form.municipalityId || !form.barangayId) {
-      setError("Municipality and barangay are required");
-      return;
-    }
+    if (!form.fullName.trim()) { setError("Full name is required"); return; }
+    if (form.password.length < 12) { setError("Password must be at least 12 characters"); return; }
+    if (form.password !== form.passwordConfirm) { setError("Passwords do not match"); return; }
+    if (!form.municipalityId || !form.barangayId) { setError("Municipality and barangay are required"); return; }
 
     try {
       setSubmitting(true);
       setError("");
       setHelperMessage("");
 
-      const payload = {
+      await register({
         email: form.email.trim(),
         fullName: form.fullName.trim(),
         phone: form.phone.trim(),
@@ -122,30 +108,18 @@ export default function SignupPage() {
         barangayId: form.barangayId,
         password: form.password,
         passwordConfirm: form.passwordConfirm,
-      };
-
-      const response = await fetch(`${API_URL}/api/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(payload),
       });
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || "Registration failed");
-      }
-
       setHelperMessage("Account created successfully! Redirecting to login...");
-      setTimeout(() => navigate("/login"), 2000);
+      setTimeout(() => navigate("/citizen/login"), 2000);
     } catch (requestError) {
-      setError(requestError.message || "Registration failed. Please try again.");
+      setError(requestError.response?.data?.message || requestError.message || "Registration failed. Please try again.");
     } finally {
       setSubmitting(false);
     }
   };
 
-  const passwordStrength = form.password.length >= 12 ? "strong" : "weak";
+  const passwordStrength = form.password.length === 0 ? null : form.password.length >= 12 ? "strong" : "weak";
   const passwordsMatch = form.password && form.password === form.passwordConfirm;
 
   return (
@@ -160,7 +134,6 @@ export default function SignupPage() {
                 <small>Aliaga Municipal Portal</small>
               </div>
             </div>
-
             <div className="login-copy">
               <p className="eyebrow">Get Started</p>
               <h1>Create Your Account</h1>
@@ -168,40 +141,24 @@ export default function SignupPage() {
                 Join Aliaga Municipal Portal to access services, submit requests, track transactions, and stay informed with local updates.
               </p>
             </div>
-
             <div className="login-role-card">
               <span className="login-portal-badge">Citizen access</span>
               <p>Create your citizen account to access self-service features within Aliaga municipality.</p>
             </div>
-
             <div className="login-highlight-list" aria-label="Benefits">
-              <article className="login-highlight">
-                <span className="login-highlight-icon">
-                  <Icon name="file" size={18} />
-                </span>
-                <div>
-                  <strong>Easy requests</strong>
-                  <p>Submit and track service requests without visiting the office.</p>
-                </div>
-              </article>
-              <article className="login-highlight">
-                <span className="login-highlight-icon">
-                  <Icon name="calendar" size={18} />
-                </span>
-                <div>
-                  <strong>Schedule appointments</strong>
-                  <p>Reduce waiting time with convenient appointment scheduling.</p>
-                </div>
-              </article>
-              <article className="login-highlight">
-                <span className="login-highlight-icon">
-                  <Icon name="lock" size={18} />
-                </span>
-                <div>
-                  <strong>Secure and private</strong>
-                  <p>Your account is secured and scoped to your municipality and barangay.</p>
-                </div>
-              </article>
+              {[
+                { icon: "file", title: "Easy requests", desc: "Submit and track service requests without visiting the office." },
+                { icon: "calendar", title: "Schedule appointments", desc: "Reduce waiting time with convenient appointment scheduling." },
+                { icon: "lock", title: "Secure and private", desc: "Your account is secured and scoped to your municipality and barangay." },
+              ].map((item) => (
+                <article className="login-highlight" key={item.title}>
+                  <span className="login-highlight-icon"><Icon name={item.icon} size={18} /></span>
+                  <div>
+                    <strong>{item.title}</strong>
+                    <p>{item.desc}</p>
+                  </div>
+                </article>
+              ))}
             </div>
           </aside>
 
@@ -221,122 +178,151 @@ export default function SignupPage() {
             )}
 
             <form aria-busy={submitting} className="form-panel login-form" onSubmit={handleSubmit}>
-              <FormInput
-                autoComplete="email"
-                autoFocus
-                label="Email"
-                name="email"
-                onChange={handleChange}
-                placeholder="your@email.com"
-                required
-                type="email"
-                value={form.email}
-              />
-
-              <FormInput
-                label="Full Name"
-                name="fullName"
-                onChange={handleChange}
-                placeholder="Juan Dela Cruz"
-                required
-                type="text"
-                value={form.fullName}
-              />
-
-              <div className="form-row">
-                <FormInput
-                  label="Phone (optional)"
-                  name="phone"
+              {/* Email */}
+              <label className="field">
+                <span>Email</span>
+                <input
+                  autoComplete="email"
+                  autoFocus
+                  disabled={submitting}
+                  name="email"
                   onChange={handleChange}
-                  placeholder="+63-9xx-xxx-xxxx"
-                  type="tel"
-                  value={form.phone}
+                  placeholder="your@email.com"
+                  required
+                  type="email"
+                  value={form.email}
                 />
-                <FormInput
-                  label="Affiliate (optional)"
-                  name="affiliate"
+              </label>
+
+              {/* Full Name */}
+              <label className="field">
+                <span>Full Name</span>
+                <input
+                  disabled={submitting}
+                  name="fullName"
                   onChange={handleChange}
-                  placeholder="Organization or barangay"
+                  placeholder="Juan Dela Cruz"
+                  required
                   type="text"
-                  value={form.affiliate}
+                  value={form.fullName}
                 />
+              </label>
+
+              {/* Phone & Affiliate row */}
+              <div className="form-grid two">
+                <label className="field">
+                  <span>Phone (optional)</span>
+                  <input
+                    disabled={submitting}
+                    name="phone"
+                    onChange={handleChange}
+                    placeholder="+63-9xx-xxx-xxxx"
+                    type="tel"
+                    value={form.phone}
+                  />
+                </label>
+                <label className="field">
+                  <span>Affiliate (optional)</span>
+                  <input
+                    disabled={submitting}
+                    name="affiliate"
+                    onChange={handleChange}
+                    placeholder="Organization or barangay"
+                    type="text"
+                    value={form.affiliate}
+                  />
+                </label>
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="municipalityId">Municipality</label>
+              {/* Municipality & Barangay row */}
+              <div className="form-grid two">
+                <label className="field">
+                  <span>Municipality</span>
                   <select
-                    id="municipalityId"
+                    disabled={submitting || municipalities.length === 0}
                     name="municipalityId"
                     onChange={handleChange}
                     required
                     value={form.municipalityId}
                   >
+                    {municipalities.length === 0 && <option value="">Loading...</option>}
                     {municipalities.map((m) => (
-                      <option key={m._id} value={m._id}>
-                        {m.name}
-                      </option>
+                      <option key={m._id} value={m._id}>{m.name}</option>
                     ))}
                   </select>
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="barangayId">Barangay</label>
+                </label>
+                <label className="field">
+                  <span>Barangay</span>
                   <select
-                    id="barangayId"
+                    disabled={submitting || barangays.length === 0}
                     name="barangayId"
                     onChange={handleChange}
                     required
                     value={form.barangayId}
                   >
+                    {barangays.length === 0 && <option value="">Select municipality first</option>}
                     {barangays.map((b) => (
-                      <option key={b.code} value={b.code}>
-                        {b.name}
-                      </option>
+                      <option key={b.code} value={b.code}>{b.name}</option>
                     ))}
                   </select>
-                </div>
+                </label>
               </div>
 
-              <FormInput
-                label="Password"
-                name="password"
-                onChange={handleChange}
-                placeholder="Min. 12 characters, uppercase, number, symbol"
-                required
-                showToggle
-                type={showPassword ? "text" : "password"}
-                value={form.password}
-                onToggleVisibility={() => setShowPassword(!showPassword)}
-              />
-
-              <FormInput
-                label="Confirm Password"
-                name="passwordConfirm"
-                onChange={handleChange}
-                placeholder="Re-enter your password"
-                required
-                showToggle
-                type={showPassword ? "text" : "password"}
-                value={form.passwordConfirm}
-              />
-
-              {form.password && (
-                <div className="form-hint" style={{ marginBottom: "16px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-                    <span style={{ color: passwordStrength === "strong" ? "#0f766e" : "#b42318" }}>
-                      Password strength: {passwordStrength}
-                    </span>
-                  </div>
-                  {passwordsMatch && form.password.length >= 12 && (
-                    <span style={{ color: "#0f766e", fontSize: "12px" }}>Passwords match ✓</span>
-                  )}
+              {/* Password */}
+              <div className="field">
+                <span>Password</span>
+                <div className="field-input-group">
+                  <input
+                    className="form-control"
+                    disabled={submitting}
+                    name="password"
+                    onChange={handleChange}
+                    placeholder="Min. 12 characters"
+                    required
+                    type={showPassword ? "text" : "password"}
+                    value={form.password}
+                  />
+                  <button
+                    className="field-inline-action"
+                    onClick={() => setShowPassword((v) => !v)}
+                    tabIndex={-1}
+                    type="button"
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </button>
                 </div>
-              )}
+                {passwordStrength && (
+                  <small className={passwordStrength === "strong" ? "text-emerald-700 font-bold" : "field-error"}>
+                    Password strength: {passwordStrength}
+                  </small>
+                )}
+              </div>
+
+              {/* Confirm Password */}
+              <div className="field">
+                <span>Confirm Password</span>
+                <div className="field-input-group">
+                  <input
+                    className="form-control"
+                    disabled={submitting}
+                    name="passwordConfirm"
+                    onChange={handleChange}
+                    placeholder="Re-enter your password"
+                    required
+                    type={showPassword ? "text" : "password"}
+                    value={form.passwordConfirm}
+                  />
+                </div>
+                {form.passwordConfirm && (
+                  <small className={passwordsMatch ? "text-emerald-700 font-bold" : "field-error"}>
+                    {passwordsMatch ? "Passwords match ✓" : "Passwords do not match"}
+                  </small>
+                )}
+              </div>
 
               <button
                 aria-busy={submitting}
-                className="button primary full-width"
+                className="button primary"
                 disabled={submitting || !passwordsMatch || form.password.length < 12}
                 type="submit"
               >
@@ -344,9 +330,9 @@ export default function SignupPage() {
               </button>
             </form>
 
-            <p className="text-center" style={{ marginTop: "16px", color: "var(--color-bayan-muted)" }}>
+            <p className="text-center text-sm text-bayan-muted" style={{ marginTop: 16 }}>
               Already have an account?{" "}
-              <Link to="/login" style={{ color: "var(--color-bayan-teal)", textDecoration: "none", fontWeight: 600 }}>
+              <Link to="/citizen/login" className="font-bold text-bayan-teal hover:text-bayan-teal-dark">
                 Sign in here
               </Link>
             </p>

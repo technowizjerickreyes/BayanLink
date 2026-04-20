@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
-import FormInput from "../../components/common/FormInput.jsx";
 import Icon from "../../components/common/Icon.jsx";
 import StatusMessage from "../../components/common/StatusMessage.jsx";
 import { useAuth } from "../../auth/AuthContext.jsx";
@@ -25,7 +24,7 @@ const portalConfig = {
     highlights: [
       { icon: "file", title: "Self-service requests", description: "Submit and track citizen transactions without visiting the office first." },
       { icon: "calendar", title: "Appointment-ready", description: "Reduce queueing with scheduled visits and release pickups." },
-      { icon: "lock", title: "Scoped access", description: "Your account only shows records within your own municipality and barangay scope." },
+      { icon: "lock", title: "Scoped access", description: "Your account only shows records within your own municipality and barangay." },
     ],
   },
   barangay_admin: {
@@ -96,17 +95,13 @@ const LOGIN_MEMORY_KEY = "bayanlink_login_memory";
 function readLoginMemory() {
   try {
     const raw = localStorage.getItem(LOGIN_MEMORY_KEY);
-
-    if (!raw) {
-      return { email: "", rememberMe: false };
-    }
-
+    if (!raw) return { email: "", rememberMe: false };
     const parsed = JSON.parse(raw);
     return {
       email: typeof parsed.email === "string" ? parsed.email : "",
       rememberMe: Boolean(parsed.rememberMe),
     };
-  } catch (_error) {
+  } catch {
     return { email: "", rememberMe: false };
   }
 }
@@ -126,16 +121,15 @@ export default function LoginPage({ portalRole = "" }) {
   useEffect(() => {
     const remembered = readLoginMemory();
     setRememberMe(remembered.rememberMe);
-    setForm((current) => ({
-      ...current,
-      email: remembered.email,
-    }));
+    setForm((current) => ({ ...current, email: remembered.email }));
   }, [portalRole]);
 
   if (loading) {
     return (
       <main className="login-page">
-        <StatusMessage>Checking secure session...</StatusMessage>
+        <div className="auth-loading">
+          <StatusMessage>Checking secure session...</StatusMessage>
+        </div>
       </main>
     );
   }
@@ -144,22 +138,18 @@ export default function LoginPage({ portalRole = "" }) {
     return <Navigate replace to={landingByRole[user?.role] || "/dashboard"} />;
   }
 
-  const handleChange = (event) => {
+  const handleChange = (e) => {
     setError("");
-    setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
       setSubmitting(true);
       setError("");
       setHelperMessage("");
-      const payload = {
-        email: form.email.trim(),
-        password: form.password,
-      };
+      const payload = { email: form.email.trim(), password: form.password };
       const response = await login(payload);
 
       if (portalRole && response.data.user.role !== portalRole) {
@@ -169,13 +159,7 @@ export default function LoginPage({ portalRole = "" }) {
       }
 
       if (rememberMe) {
-        localStorage.setItem(
-          LOGIN_MEMORY_KEY,
-          JSON.stringify({
-            email: payload.email,
-            rememberMe: true,
-          })
-        );
+        localStorage.setItem(LOGIN_MEMORY_KEY, JSON.stringify({ email: payload.email, rememberMe: true }));
       } else {
         localStorage.removeItem(LOGIN_MEMORY_KEY);
       }
@@ -183,200 +167,153 @@ export default function LoginPage({ portalRole = "" }) {
       const destination = location.state?.from?.pathname || landingByRole[response.data.user.role] || "/dashboard";
       navigate(destination, { replace: true });
     } catch (requestError) {
-      setError(requestError.response?.data?.message || "Invalid credentials");
+      setError(requestError.response?.data?.message || "Invalid credentials. Please try again.");
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="min-h-screen flex flex-col lg:flex-row">
-        {/* Left Side - Image & Branding */}
-        <div className="lg:w-1/2 relative overflow-hidden">
-          {/* Background Image */}
-          <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
-               style={{backgroundImage: "url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"}}>
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-900/95 via-blue-800/90 to-green-700/80"></div>
-          </div>
-          
-          {/* Content */}
-          <div className="relative z-10 h-full flex flex-col justify-between p-8 lg:p-12 text-white">
-            {/* Logo */}
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center text-blue-900 font-bold text-xl shadow-lg">
-                A
-              </div>
+    <main className="login-page">
+      <section className="login-shell">
+        <div className="login-stage">
+          {/* ── Left aside ── */}
+          <aside className="login-aside">
+            <div className="brand login-brand">
+              <span className="brand-mark">A</span>
               <div>
-                <h1 className="text-2xl font-bold">BayanLink</h1>
-                <p className="text-blue-100 text-sm">Aliaga Municipal Portal</p>
+                <strong>BayanLink</strong>
+                <small>Aliaga Municipal Portal</small>
               </div>
             </div>
-            
-            {/* Main Content */}
-            <div className="flex-1 flex flex-col justify-center max-w-md">
-              <p className="text-amber-400 font-semibold text-sm uppercase tracking-wide mb-4">
-                {portal.eyebrow}
-              </p>
-              <h2 className="text-4xl lg:text-5xl font-black mb-6 leading-tight">
-                {portal.title}
-              </h2>
-              <p className="text-lg text-blue-100 mb-8 leading-relaxed">
-                {portal.subtitle}
-              </p>
-              
-              {/* Features */}
-              <div className="space-y-4">
-                {portal.highlights.map((item) => (
-                  <div key={item.title} className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
-                      <Icon name={item.icon} size={16} className="text-amber-400" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-white mb-1">{item.title}</h3>
-                      <p className="text-blue-100 text-sm">{item.description}</p>
-                    </div>
+
+            <div className="login-copy">
+              <p className="eyebrow">{portal.eyebrow}</p>
+              <h1>{portal.title}</h1>
+              <p className="login-subtitle">{portal.subtitle}</p>
+            </div>
+
+            <div className="login-role-card">
+              <span className="login-portal-badge">{portal.accessLabel}</span>
+              <p>{portal.accessNote}</p>
+            </div>
+
+            <div className="login-highlight-list" aria-label="Portal highlights">
+              {portal.highlights.map((item) => (
+                <article className="login-highlight" key={item.title}>
+                  <span className="login-highlight-icon">
+                    <Icon name={item.icon} size={18} />
+                  </span>
+                  <div>
+                    <strong>{item.title}</strong>
+                    <p>{item.description}</p>
                   </div>
-                ))}
-              </div>
+                </article>
+              ))}
             </div>
-            
-            {/* Bottom Info */}
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="bg-amber-500 text-blue-900 text-xs font-bold px-2 py-1 rounded-full">
-                  {portal.accessLabel}
-                </span>
-              </div>
-              <p className="text-sm text-blue-100">{portal.accessNote}</p>
-            </div>
-          </div>
-        </div>
+          </aside>
 
-          {/* Right Side - Login Form */}
-        <div className="lg:w-1/2 bg-gray-50 flex items-center justify-center p-8 lg:p-12">
-          <div className="w-full max-w-md bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-            {/* Logo */}
-            <div className="text-center mb-8">
-              <img src="/logo.png" className="w-16 mx-auto mb-4" alt="Aliaga Municipal Logo" />
-              <div className="border-t border-gray-200 pt-4"></div>
+          {/* ── Right panel ── */}
+          <section className="login-panel">
+            <div className="login-panel-head">
+              <p className="eyebrow">Sign in</p>
+              <h2>{portal.signInTitle}</h2>
+              <p>{portal.signInDescription}</p>
             </div>
 
-            {/* Form Header */}
-            <div className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-                Sign In
-              </h2>
-              <p className="text-sm text-gray-600">
-                Enter your credentials to access the {portal.title.toLowerCase()}
-              </p>
-            </div>
+            {error && <StatusMessage type="error">{error}</StatusMessage>}
 
-            {/* Error/Helper Messages */}
-            {error && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <div className="flex items-center gap-2 text-red-800">
-                  <Icon name="alert" size={16} />
-                  <span className="text-sm font-medium">{error}</span>
-                </div>
-              </div>
-            )}
-            
             {helperMessage && (
-              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="flex items-center gap-2 text-blue-800">
-                  <Icon name="lock" size={16} />
-                  <span className="text-sm">{helperMessage}</span>
-                </div>
+              <div className="login-helper-note" role="status">
+                <Icon name="info" size={16} />
+                <span>{helperMessage}</span>
               </div>
             )}
 
-            {/* Login Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Email Field */}
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address
-                </label>
+            <form
+              aria-busy={submitting}
+              className="form-panel login-form"
+              noValidate
+              onSubmit={handleSubmit}
+            >
+              {/* Email */}
+              <label className="field">
+                <span>Email address</span>
                 <input
-                  id="email"
-                  name="email"
-                  type="email"
                   autoComplete="email"
-                  required
-                  value={form.email}
-                  onChange={handleChange}
+                  autoFocus
                   disabled={submitting}
-                  className="input"
+                  name="email"
+                  onChange={handleChange}
                   placeholder="your@email.com"
+                  required
+                  type="email"
+                  value={form.email}
                 />
-              </div>
+              </label>
 
-              {/* Password Field */}
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                  Password
-                </label>
-                <div className="relative">
+              {/* Password with toggle */}
+              <div className="field">
+                <span>Password</span>
+                <div className="field-input-group">
                   <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
                     autoComplete="current-password"
-                    required
-                    value={form.password}
-                    onChange={handleChange}
+                    className="form-control"
                     disabled={submitting}
-                    className="input pr-12"
+                    name="password"
+                    onChange={handleChange}
                     placeholder="Enter your password"
+                    required
+                    type={showPassword ? "text" : "password"}
+                    value={form.password}
                   />
                   <button
+                    className="field-inline-action"
+                    onClick={() => setShowPassword((v) => !v)}
+                    tabIndex={-1}
+                    title={showPassword ? "Hide password" : "Show password"}
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    disabled={submitting}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:opacity-50"
                   >
-                    <Icon name={showPassword ? "hide" : "view"} size={20} />
+                    <Icon name={showPassword ? "hide" : "view"} size={15} />
+                    <span>{showPassword ? "Hide" : "Show"}</span>
                   </button>
                 </div>
               </div>
 
-              {/* Remember & Forgot */}
-              <div className="flex items-center justify-between">
-                <label className="flex items-center">
+              {/* Remember me + Forgot password */}
+              <div className="login-form-row">
+                <label className="checkbox-field">
                   <input
-                    type="checkbox"
                     checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
                     disabled={submitting}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:opacity-50"
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    type="checkbox"
                   />
-                  <span className="ml-2 text-sm text-gray-600">Remember email</span>
+                  <span>Remember email</span>
                 </label>
                 <button
-                  type="button"
+                  className="login-link-button"
                   onClick={() =>
                     setHelperMessage(
                       portalRole === "citizen"
-                        ? "Password recovery will be added in a later phase. For now, please contact your barangay office or municipal help desk for assistance."
+                        ? "Password recovery will be added in a later phase. Please contact your barangay office or municipal help desk for assistance."
                         : "Password recovery is not yet connected in this portal. Please coordinate with your authorized system administrator."
                     )
                   }
-                  className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                  type="button"
                 >
                   Forgot password?
                 </button>
               </div>
 
-              {/* Submit Button */}
               <button
+                className="button primary login-submit"
+                disabled={submitting || !form.email || !form.password}
                 type="submit"
-                disabled={submitting}
-                className="btn-primary w-full"
               >
                 {submitting ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span className="loading-dot" style={{ background: "white" }} />
                     <span>Signing in...</span>
                   </>
                 ) : (
@@ -388,24 +325,22 @@ export default function LoginPage({ portalRole = "" }) {
               </button>
             </form>
 
-            {/* Support Info */}
-            <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-              <h3 className="font-semibold text-gray-900 mb-1">Need Access Support?</h3>
-              <p className="text-sm text-gray-600">{portal.supportNote}</p>
+            <div className="login-footnote">
+              <strong>Need access support?</strong>
+              <p>{portal.supportNote}</p>
             </div>
 
-            {/* Sign Up Link */}
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
-                Don't have an account?{" "}
-                <Link to="/signup" className="text-blue-600 hover:text-blue-800 font-medium">
-                  Create Account
+            {portalRole === "citizen" || portalRole === "" ? (
+              <p className="text-center text-sm text-bayan-muted" style={{ marginTop: 8 }}>
+                Don&apos;t have an account?{" "}
+                <Link className="login-link-button" to="/signup">
+                  Create account
                 </Link>
               </p>
-            </div>
-          </div>
+            ) : null}
+          </section>
         </div>
-      </div>
+      </section>
     </main>
   );
 }
